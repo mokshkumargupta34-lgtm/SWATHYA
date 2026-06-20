@@ -24,6 +24,7 @@ import {
   Sparkles,
   Stethoscope,
   Upload,
+  UserRound,
   Users,
 } from "lucide-react";
 import { ClickPowerUp } from "@/components/ui/click-powerup";
@@ -35,6 +36,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/client";
+import { ProfileCard } from "@/components/dashboard/profile-card";
 
 const NAV = [
   { icon: LayoutDashboard, label: "Overview", href: "#overview" },
@@ -43,6 +45,7 @@ const NAV = [
   { icon: Brain, label: "Mental Health", href: "#mind" },
   { icon: Pill, label: "Medicine", href: "#medicine" },
   { icon: FileHeart, label: "Records", href: "#records" },
+  { icon: UserRound, label: "Profile", href: "#profile" },
 ];
 
 const STATS = [
@@ -383,25 +386,31 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          {/* Quick actions + explore */}
-          <Card icon={Sparkles} title="Quick actions">
-            <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-              <div className="flex flex-wrap items-center gap-4">
-                <Button className="gap-2">
-                  <Upload className="h-4 w-4" /> Upload report
-                </Button>
-                <Button variant="secondary" className="gap-2">
-                  <CalendarClock className="h-4 w-4" /> Book appointment
-                </Button>
-                <ClickPowerUp className="text-foreground">New Record</ClickPowerUp>
+          {/* Profile + quick actions */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <Card id="profile" icon={UserRound} title="Your profile">
+              <ProfileCard />
+            </Card>
+
+            <Card icon={Sparkles} title="Quick actions">
+              <div className="flex h-full flex-col justify-center gap-6">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button className="gap-2">
+                    <Upload className="h-4 w-4" /> Upload report
+                  </Button>
+                  <Button variant="secondary" className="gap-2">
+                    <CalendarClock className="h-4 w-4" /> Book appointment
+                  </Button>
+                  <ClickPowerUp className="text-foreground">New Record</ClickPowerUp>
+                </div>
+                <Link href="/explore" className="no-underline">
+                  <FrameButton as="button" variant="outline" glow>
+                    Explore our vision
+                  </FrameButton>
+                </Link>
               </div>
-              <Link href="/explore" className="no-underline">
-                <FrameButton as="button" variant="outline" glow>
-                  Explore our vision
-                </FrameButton>
-              </Link>
-            </div>
-          </Card>
+            </Card>
+          </div>
 
           <p className="pb-10 pt-2 text-center text-xs text-muted-foreground">
             SWASTHYA · स्वास्थ्य — bringing healthcare closer in distance, cost and language.
