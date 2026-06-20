@@ -98,3 +98,46 @@ create policy "Users can delete their own avatar"
     bucket_id = 'avatars'
     and (storage.foldername(name))[1] = auth.uid()::text
   );
+
+-- ============================================================================
+-- Health profile: the care details collected during onboarding, one row per
+-- user. Created/updated via upsert from the onboarding form.
+-- ============================================================================
+create table if not exists public.health_profiles (
+  id                       uuid primary key references auth.users (id) on delete cascade,
+  date_of_birth            date,
+  gender                   text,
+  blood_group              text,
+  height_cm                numeric,
+  weight_kg                numeric,
+  phone                    text,
+  location                 text,
+  preferred_language       text,
+  chronic_conditions       text[] default '{}',
+  allergies                text,
+  current_medications      text,
+  is_pregnant              boolean default false,
+  stress_level             int,      -- 1..5 self-reported wellbeing
+  emergency_contact_name   text,
+  emergency_contact_phone  text,
+  notes                    text,
+  updated_at               timestamptz not null default now()
+);
+
+alter table public.health_profiles enable row level security;
+
+drop policy if exists "Health profile viewable by owner" on public.health_profiles;
+create policy "Health profile viewable by owner"
+  on public.health_profiles for select
+  using (auth.uid() = id);
+
+drop policy if exists "Health profile insertable by owner" on public.health_profiles;
+create policy "Health profile insertable by owner"
+  on public.health_profiles for insert
+  with check (auth.uid() = id);
+
+drop policy if exists "Health profile updatable by owner" on public.health_profiles;
+create policy "Health profile updatable by owner"
+  on public.health_profiles for update
+  using (auth.uid() = id)
+  with check (auth.uid() = id);

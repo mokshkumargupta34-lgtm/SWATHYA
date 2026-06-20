@@ -54,7 +54,7 @@ export function SiteNav() {
             Log in
           </Link>
           <Link
-            href="/login"
+            href="/signup"
             className="cursor-pointer rounded-full bg-gradient-to-r from-cyan-400 to-emerald-500 px-4 py-2 text-sm font-semibold text-[#03141a] transition-transform hover:scale-105"
           >
             Get started

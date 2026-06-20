@@ -37,6 +37,7 @@ import { useRouter } from "next/navigation";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/client";
 import { ProfileCard } from "@/components/dashboard/profile-card";
+import { HealthProfileCard } from "@/components/dashboard/health-profile-card";
 
 const NAV = [
   { icon: LayoutDashboard, label: "Overview", href: "#overview" },
@@ -207,12 +208,16 @@ export default function DashboardPage() {
     [],
   );
   const [email, setEmail] = React.useState<string | null>(null);
+  const [fullName, setFullName] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (!supabase) return;
-    supabase.auth
-      .getUser()
-      .then(({ data }) => setEmail(data.user?.email ?? null));
+    supabase.auth.getUser().then(({ data }) => {
+      setEmail(data.user?.email ?? null);
+      setFullName(
+        (data.user?.user_metadata?.full_name as string | undefined) ?? null,
+      );
+    });
   }, [supabase]);
 
   const signOut = async () => {
@@ -221,7 +226,7 @@ export default function DashboardPage() {
     router.refresh();
   };
 
-  const initial = (email?.[0] ?? "A").toUpperCase();
+  const initial = (fullName?.[0] ?? email?.[0] ?? "A").toUpperCase();
 
   return (
     <div className="min-h-screen bg-background lg:flex">
@@ -262,7 +267,7 @@ export default function DashboardPage() {
         <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/80 px-6 py-4 backdrop-blur">
           <div>
             <p className="text-sm text-muted-foreground">
-              Welcome back{email ? `, ${email}` : ""},
+              Welcome back{fullName || email ? `, ${fullName || email}` : ""}
             </p>
             <h1 className="font-heading text-xl font-semibold text-foreground">
               Care Console
@@ -301,6 +306,9 @@ export default function DashboardPage() {
               </motion.div>
             ))}
           </div>
+
+          {/* Personal health profile (reflects onboarding answers) */}
+          <HealthProfileCard />
 
           {/* Row: chart + tele-care */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

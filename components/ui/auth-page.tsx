@@ -168,6 +168,16 @@ export function AuthPage({
 						</p>
 					)}
 
+					<p className="text-center text-sm text-muted-foreground">
+						New to SWASTHYA?{' '}
+						<a
+							href="/signup"
+							className="text-primary underline underline-offset-4"
+						>
+							Create an account
+						</a>
+					</p>
+
 					<p className="text-muted-foreground mt-8 text-sm">
 						By clicking continue, you agree to our{' '}
 						<a
