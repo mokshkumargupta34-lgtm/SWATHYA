@@ -1,0 +1,271 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  SWASTHYA design tokens.
+  Palette (from ui-ux-pro-max design system): calm cyan + health green.
+    primary  #0891B2  · secondary #22D3EE · cta/accent #059669
+    bg       #ECFEFF  · text      #164E63
+  Tokens are stored as full colors so both the shadcn utility classes
+  (bg-primary, text-muted-foreground, …) and the components that read the raw
+  custom properties (motion-footer, click-powerup, frame-button) resolve them.
+*/
+
+:root {
+  --radius: 0.625rem;
+
+  --background: hsl(185 100% 96%);
+  --foreground: hsl(196 64% 18%);
+
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(196 64% 18%);
+
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(196 64% 18%);
+
+  --primary: hsl(192 91% 36%);
+  --primary-foreground: hsl(185 100% 98%);
+
+  --secondary: hsl(187 85% 53%);
+  --secondary-foreground: hsl(196 70% 16%);
+
+  --accent: hsl(161 94% 30%);
+  --accent-foreground: hsl(150 100% 98%);
+
+  --muted: hsl(186 45% 90%);
+  --muted-foreground: hsl(196 28% 38%);
+
+  --destructive: hsl(0 80% 55%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  --border: hsl(188 42% 84%);
+  --input: hsl(188 42% 84%);
+  --ring: hsl(192 91% 36%);
+
+  --sidebar-ring: hsl(192 60% 60%);
+
+  /* Extra ramp vars used by the three.js hero (anomalous-matter). */
+  --sky-300: 199 92% 64%;
+  --gray-300: 210 16% 76%;
+
+  /* Flux loader accent (follows the brand). */
+  --flux-from: hsl(192 91% 40%);
+  --flux-to: hsl(187 90% 60%);
+
+  --font-heading: var(--font-lora), ui-serif, Georgia, serif;
+  --font-body: var(--font-raleway), ui-sans-serif, system-ui, sans-serif;
+}
+
+.dark {
+  --background: hsl(197 60% 6%);
+  --foreground: hsl(185 60% 95%);
+
+  --card: hsl(197 50% 9%);
+  --card-foreground: hsl(185 60% 95%);
+
+  --popover: hsl(197 50% 9%);
+  --popover-foreground: hsl(185 60% 95%);
+
+  --primary: hsl(187 85% 53%);
+  --primary-foreground: hsl(197 80% 8%);
+
+  --secondary: hsl(192 80% 30%);
+  --secondary-foreground: hsl(185 60% 95%);
+
+  --accent: hsl(160 84% 45%);
+  --accent-foreground: hsl(197 80% 8%);
+
+  --muted: hsl(197 38% 16%);
+  --muted-foreground: hsl(190 25% 68%);
+
+  --destructive: hsl(0 75% 60%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  --border: hsl(196 35% 20%);
+  --input: hsl(196 35% 22%);
+  --ring: hsl(187 85% 53%);
+
+  --sidebar-ring: hsl(196 40% 40%);
+
+  --sky-300: 199 92% 64%;
+  --gray-300: 210 16% 76%;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-heading);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: var(--font-heading);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Keyframes referenced by the integrated components                   */
+/* ------------------------------------------------------------------ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-long {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up   { animation: fade-in-up 0.9s ease-out both; }
+.animate-fade-in-long { animation: fade-in-long 1.6s ease-out both; }
+
+/* ------------------------------------------------------------------ */
+/* horizon-hero-section.tsx companion styles (not shipped with file)   */
+/* ------------------------------------------------------------------ */
+.hero-container {
+  position: relative;
+  width: 100%;
+  background: #04070d;
+  color: #fff;
+}
+.hero-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 0;
+}
+.hero-content {
+  position: relative;
+  z-index: 10;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 12vw, 9rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 0.95;
+  margin: 0;
+  display: flex;
+  gap: 0.02em;
+}
+.hero-title .title-char { display: inline-block; }
+.hero-subtitle {
+  margin-top: 1.5rem;
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.08em;
+}
+.hero-subtitle .subtitle-line { margin: 0.2rem 0; }
+.side-menu {
+  position: fixed;
+  left: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+.side-menu .menu-icon { display: flex; flex-direction: column; gap: 4px; }
+.side-menu .menu-icon span { width: 22px; height: 2px; background: #fff; }
+.vertical-text {
+  writing-mode: vertical-rl;
+  letter-spacing: 0.4em;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+.scroll-progress {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+.scroll-text, .section-counter {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.progress-track {
+  width: 2px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+.progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  background: linear-gradient(180deg, #22d3ee, #059669);
+}
+.scroll-sections .content-section {
+  position: relative;
+  z-index: 10;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Thin, themed scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--primary) 55%, transparent);
+  border-radius: 999px;
+}
