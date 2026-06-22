@@ -2,14 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import {
-  Stethoscope,
-  Baby,
-  Brain,
-  Pill,
-  FileHeart,
-  ArrowUpRight,
-} from "lucide-react";
+import { Stethoscope, Baby, Brain, Pill, FileHeart } from "lucide-react";
 
 const AREAS = [
   {
@@ -102,9 +95,6 @@ export function FocusAreas() {
                 <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
                   {a.body}
                 </p>
-                <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-primary opacity-0 transition-all duration-300 group-hover:opacity-100">
-                  Learn more <ArrowUpRight className="h-4 w-4" />
-                </span>
               </div>
             </motion.article>
           ))}
@@ -116,7 +106,7 @@ export function FocusAreas() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-80px" }}
-            className="group relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-primary to-emerald-600 p-7 text-primary-foreground shadow-lg md:col-span-1"
+            className="group relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-primary to-emerald-600 p-7 text-primary-foreground shadow-lg md:col-span-3"
           >
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
               <FileHeart className="h-6 w-6" />

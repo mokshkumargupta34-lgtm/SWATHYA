@@ -4,6 +4,19 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * BUTTON SYSTEM
+ * -------------
+ * This shadcn `Button` is the default primary/secondary control everywhere
+ * (forms, dashboard, CTAs). It is the one to reach for by default.
+ *
+ * Two signature buttons are reserved for the marketing hero only, and both
+ * now share the brand `primary` token so the design language is consistent:
+ *   - `FrameButton`  (components/ui/frame-button.tsx) — the framed hero CTA.
+ *   - `ClickPowerUp` (components/ui/click-powerup.tsx) — decorative accent.
+ * Use those sparingly; default to this `Button` for normal UI.
+ */
+
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
   {

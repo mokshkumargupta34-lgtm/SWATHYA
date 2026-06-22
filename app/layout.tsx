@@ -56,7 +56,19 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${lora.variable} ${raleway.variable}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${lora.variable} ${raleway.variable}`}
+    >
+      <head>
+        {/* Apply saved theme before paint to avoid a flash of the wrong theme. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="bg-background text-foreground antialiased">{children}</body>
     </html>
   );

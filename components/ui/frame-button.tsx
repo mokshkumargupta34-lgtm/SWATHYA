@@ -57,8 +57,10 @@ export function FrameButton({
 
     "active:scale-[0.985]",
 
+    // On-brand primary fill so the hero CTA reads clearly on the dark hero
+    // and shares the design language of the other primary buttons.
     variant === "default" && [
-      "dark:bg-white bg-black hover:bg-black text-white dark:text-black",
+      "bg-primary text-primary-foreground hover:bg-primary/90 border-primary/40",
     ],
 
     variant === "secondary" && [

@@ -98,7 +98,9 @@ All plans include access to our platform, lead generation tools, and dedicated s
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* perspective gives the rotate-y/translate-z cards real depth instead of
+          rendering as an accidental flat skew. */}
+      <div className="grid grid-cols-1 gap-4 [perspective:1200px] md:grid-cols-3">
         {plans.map((plan, index) => (
           <motion.div
             key={index}

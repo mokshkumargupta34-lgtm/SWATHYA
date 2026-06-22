@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { HeartPulse, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const LINKS = [
   { label: "Focus", href: "#focus" },
@@ -56,6 +57,7 @@ export function SiteNav() {
         </div>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle className="text-white/90 hover:bg-white/10" />
           <Link
             href="/login"
             className="hidden rounded-full px-4 py-2 text-sm font-medium text-white/80 transition-colors hover:text-white sm:inline-flex"
