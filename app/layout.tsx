@@ -65,7 +65,7 @@ export default function RootLayout({
         {/* Apply saved theme before paint to avoid a flash of the wrong theme. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}`,
+            __html: `try{var e=document.documentElement;if(localStorage.getItem('theme')==='dark'){e.classList.add('dark')}if(localStorage.getItem('swasthya:lite')==='1'){e.classList.add('lite')}}catch(e){}`,
           }}
         />
       </head>

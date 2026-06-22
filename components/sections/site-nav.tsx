@@ -5,6 +5,7 @@ import Link from "next/link";
 import { HeartPulse, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useLiteMode, setLiteMode } from "@/hooks/use-lite-mode";
 
 const LINKS = [
   { label: "Focus", href: "#focus" },
@@ -15,6 +16,7 @@ const LINKS = [
 export function SiteNav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const lite = useLiteMode();
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -103,6 +105,28 @@ export function SiteNav() {
             >
               Log in
             </Link>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={lite}
+              onClick={() => setLiteMode(!lite)}
+              className="flex items-center justify-between rounded-xl px-4 py-3 text-base font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <span>Lite mode (data saver)</span>
+              <span
+                className={cn(
+                  "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                  lite ? "bg-emerald-400" : "bg-white/20",
+                )}
+              >
+                <span
+                  className={cn(
+                    "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                    lite ? "translate-x-6" : "translate-x-1",
+                  )}
+                />
+              </span>
+            </button>
           </div>
         </div>
       )}

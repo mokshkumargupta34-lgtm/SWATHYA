@@ -2,9 +2,10 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Check, Globe, Loader2, LogOut, Settings, ShieldCheck, Sparkles } from "lucide-react";
+import { Check, Globe, Loader2, LogOut, Settings, ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiGet, apiSend } from "@/lib/client-api";
+import { useLiteMode, setLiteMode } from "@/hooks/use-lite-mode";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/client";
 import { ProfileCard } from "@/components/dashboard/profile-card";
@@ -29,8 +30,8 @@ type Profile = {
 
 const PLANS = [
   { value: "JAN", label: "Individual (JAN)", price: "Free", desc: "For individuals & families" },
-  { value: "PARIVAR", label: "Family+ (PARIVAR)", price: "$9/mo", desc: "Up to 6 members, specialists" },
-  { value: "SAMUDAY", label: "Community (SAMUDAY)", price: "$49/mo", desc: "For NGOs, clinics & programs" },
+  { value: "PARIVAR", label: "Family+ (PARIVAR)", price: "₹99/mo", desc: "Up to 6 members, specialists" },
+  { value: "SAMUDAY", label: "Community (SAMUDAY)", price: "₹499/mo", desc: "For NGOs, clinics & programs" },
 ];
 
 export default function SettingsPage() {
@@ -40,6 +41,7 @@ export default function SettingsPage() {
   const [savingLang, setSavingLang] = React.useState(false);
   const [langSaved, setLangSaved] = React.useState(false);
   const [planBusy, setPlanBusy] = React.useState<string | null>(null);
+  const lite = useLiteMode();
 
   React.useEffect(() => {
     apiGet<{ profile: Profile }>("/api/profile")
@@ -194,6 +196,42 @@ export default function SettingsPage() {
             })}
           </div>
         )}
+      </SectionCard>
+
+      {/* Lite mode — low-bandwidth data saver */}
+      <SectionCard>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Zap className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="font-medium text-foreground">Lite mode (data saver)</p>
+              <p className="text-sm text-muted-foreground">
+                Skip heavy animations and 3-D graphics for faster loads on slow
+                connections.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={lite}
+            aria-label="Toggle lite mode"
+            onClick={() => setLiteMode(!lite)}
+            className={cn(
+              "relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors",
+              lite ? "bg-primary" : "bg-muted",
+            )}
+          >
+            <span
+              className={cn(
+                "inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform",
+                lite ? "translate-x-6" : "translate-x-1",
+              )}
+            />
+          </button>
+        </div>
       </SectionCard>
 
       {/* Sign out */}
