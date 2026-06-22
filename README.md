@@ -28,7 +28,7 @@ cp .env.example .env.local   # then add your Supabase URL + anon key (optional)
 npm run dev
 ```
 
-Open <http://localhost:3000>.
+Open <https://swathya.vercel.app/>.
 
 ### Enabling real auth (optional)
 
