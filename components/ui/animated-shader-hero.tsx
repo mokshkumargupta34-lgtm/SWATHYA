@@ -132,6 +132,17 @@ void main(){gl_Position=position;}`;
       }
     }
 
+    // Full teardown: free GL objects and release the WebGL context so we don't
+    // exhaust the browser's ~16-context budget across mounts / strict mode.
+    dispose() {
+      const gl = this.gl;
+      this.reset();
+      if (this.buffer) gl.deleteBuffer(this.buffer);
+      this.buffer = null;
+      this.program = null;
+      gl.getExtension("WEBGL_lose_context")?.loseContext();
+    }
+
     setup() {
       const gl = this.gl;
       this.vs = gl.createShader(gl.VERTEX_SHADER)!;
@@ -191,44 +202,63 @@ void main(){gl_Position=position;}`;
 
   // Pointer Handler class
   class PointerHandler {
+    private element: HTMLCanvasElement;
     private scale: number;
     private active = false;
     private pointers = new Map<number, number[]>();
     private lastCoords = [0, 0];
     private moves = [0, 0];
+    // Kept as fields so the exact references can be removed on destroy().
+    private onDown: (e: PointerEvent) => void;
+    private onUp: () => void;
+    private onLeave: (e: PointerEvent) => void;
+    private onMove: (e: PointerEvent) => void;
 
     constructor(element: HTMLCanvasElement, scale: number) {
+      this.element = element;
       this.scale = scale;
 
       const map = (element: HTMLCanvasElement, scale: number, x: number, y: number) =>
         [x * scale, element.height - y * scale];
 
-      element.addEventListener("pointerdown", (e) => {
+      this.onDown = (e) => {
         this.active = true;
         this.pointers.set(e.pointerId, map(element, this.getScale(), e.clientX, e.clientY));
-      });
+      };
 
-      element.addEventListener("pointerup", () => {
+      this.onUp = () => {
         if (this.count === 1) {
           this.lastCoords = this.first;
         }
         this.active = this.pointers.size > 0;
-      });
+      };
 
-      element.addEventListener("pointerleave", (e) => {
+      this.onLeave = (e) => {
         if (this.count === 1) {
           this.lastCoords = this.first;
         }
         this.pointers.delete(e.pointerId);
         this.active = this.pointers.size > 0;
-      });
+      };
 
-      element.addEventListener("pointermove", (e) => {
+      this.onMove = (e) => {
         if (!this.active) return;
         this.lastCoords = [e.clientX, e.clientY];
         this.pointers.set(e.pointerId, map(element, this.getScale(), e.clientX, e.clientY));
         this.moves = [this.moves[0] + e.movementX, this.moves[1] + e.movementY];
-      });
+      };
+
+      element.addEventListener("pointerdown", this.onDown);
+      element.addEventListener("pointerup", this.onUp);
+      element.addEventListener("pointerleave", this.onLeave);
+      element.addEventListener("pointermove", this.onMove);
+    }
+
+    destroy() {
+      this.element.removeEventListener("pointerdown", this.onDown);
+      this.element.removeEventListener("pointerup", this.onUp);
+      this.element.removeEventListener("pointerleave", this.onLeave);
+      this.element.removeEventListener("pointermove", this.onMove);
     }
 
     getScale() {
@@ -318,9 +348,10 @@ void main(){gl_Position=position;}`;
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      if (rendererRef.current) {
-        rendererRef.current.reset();
-      }
+      pointersRef.current?.destroy();
+      rendererRef.current?.dispose();
+      rendererRef.current = null;
+      pointersRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

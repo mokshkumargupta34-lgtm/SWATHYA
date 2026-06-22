@@ -331,6 +331,9 @@ export const Component = () => {
       const { current: refs } = threeRefs;
       refs.animationId = requestAnimationFrame(animate);
 
+      // Skip GPU work while the tab is hidden.
+      if (document.hidden) return;
+
       const time = Date.now() * 0.001;
 
       // Update stars

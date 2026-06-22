@@ -183,7 +183,7 @@ export function AnomalousMatterHero({
 }) {
   return (
     <section
-      role="banner"
+      aria-label="Youth mental health"
       className="relative w-full h-screen bg-background text-foreground overflow-hidden"
     >
       <Suspense fallback={<div className="w-full h-full bg-background" />}>

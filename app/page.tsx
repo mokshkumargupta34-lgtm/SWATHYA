@@ -1,7 +1,7 @@
 import { SiteNav } from "@/components/sections/site-nav";
 import { ScrollSequenceHero } from "@/components/sections/scroll-sequence-hero";
 import { FocusAreas } from "@/components/sections/focus-areas";
-import { AnomalousMatterHero } from "@/components/ui/anomalous-matter-hero";
+import { AnomalousSection } from "@/components/sections/anomalous-section";
 import { PlatformReveal } from "@/components/sections/platform-reveal";
 import { ReachSection } from "@/components/sections/reach-section";
 import { PricingSection } from "@/components/sections/pricing-section";
@@ -19,8 +19,8 @@ export default function Home() {
       {/* The five focus areas */}
       <FocusAreas />
 
-      {/* Mental health — immersive three.js anomaly */}
-      <AnomalousMatterHero
+      {/* Mental health — immersive three.js anomaly (lazy-loaded) */}
+      <AnomalousSection
         title="03 · Mental health for youth"
         subtitle="A calm space to be heard"
         description="Anonymous check-ins, mood tracking and counsellors who understand a younger generation — because minds deserve care too."
