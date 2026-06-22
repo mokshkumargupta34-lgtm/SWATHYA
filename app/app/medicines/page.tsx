@@ -60,6 +60,8 @@ export default function MedicinesPage() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
+            type="search"
+            aria-label="Search medicines"
             placeholder="Search a medicine — try “Paracetamol”, “Augmentin”…"
             className="w-full rounded-2xl border border-input bg-background py-3 pl-11 pr-4 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />

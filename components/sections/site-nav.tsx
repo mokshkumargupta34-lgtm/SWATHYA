@@ -47,7 +47,7 @@ export function SiteNav() {
           <span className="text-lg">SWASTHYA</span>
         </Link>
 
-        <div className="hidden items-center gap-8 text-sm font-medium text-white/70 md:flex">
+        <div className="hidden items-center gap-8 text-sm font-medium text-white/85 md:flex">
           {LINKS.map((l) => (
             <a key={l.label} href={l.href} className="transition-colors hover:text-white">
               {l.label}

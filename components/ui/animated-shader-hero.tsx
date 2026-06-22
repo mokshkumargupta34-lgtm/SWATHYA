@@ -391,6 +391,7 @@ const Hero: React.FC<HeroProps> = ({
 
       <canvas
         ref={canvasRef}
+        aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover touch-none"
         style={{ background: "black" }}
       />
@@ -418,12 +419,14 @@ const Hero: React.FC<HeroProps> = ({
         <div className="text-center space-y-6 max-w-5xl mx-auto px-4">
           {/* Main Heading with Animation */}
           <div className="space-y-2 font-heading">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-300 bg-clip-text text-transparent animate-fade-in-up animation-delay-200">
-              {headline.line1}
-            </h1>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-emerald-300 via-cyan-400 to-sky-400 bg-clip-text text-transparent animate-fade-in-up animation-delay-400">
-              {headline.line2}
-            </h1>
+            <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold">
+              <span className="block bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-300 bg-clip-text text-transparent animate-fade-in-up animation-delay-200">
+                {headline.line1}
+              </span>
+              <span className="block bg-gradient-to-r from-emerald-300 via-cyan-400 to-sky-400 bg-clip-text text-transparent animate-fade-in-up animation-delay-400">
+                {headline.line2}
+              </span>
+            </h2>
           </div>
 
           {/* Subtitle with Animation */}

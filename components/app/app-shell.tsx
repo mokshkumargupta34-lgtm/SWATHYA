@@ -127,9 +127,9 @@ export function AppShell({
             <p className="text-sm text-muted-foreground">
               Welcome back{user.name ? `, ${user.name.split(" ")[0]}` : ""}
             </p>
-            <h1 className="font-heading text-xl font-semibold text-foreground">
+            <p className="font-heading text-xl font-semibold text-foreground">
               Care Console
-            </h1>
+            </p>
           </div>
           <div className="flex items-center gap-3">
             {!isSupabaseConfigured && (

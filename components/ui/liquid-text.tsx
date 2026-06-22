@@ -93,6 +93,11 @@ interface MorphingTextProps {
   texts: string[];
   /** Stable label announced to assistive tech in place of the morphing text. */
   srLabel?: string;
+  /**
+   * When the surrounding markup already provides the heading/label (e.g. a
+   * real <h1>), render this purely decoratively so AT doesn't announce it twice.
+   */
+  decorative?: boolean;
 }
 
 const Texts: React.FC<Pick<MorphingTextProps, "texts">> = ({ texts }) => {
@@ -132,10 +137,12 @@ const MorphingText: React.FC<MorphingTextProps> = ({
   texts,
   className,
   srLabel,
+  decorative = false,
 }) => (
   <div
-    role="img"
-    aria-label={srLabel ?? texts.join(" — ")}
+    role={decorative ? undefined : "img"}
+    aria-hidden={decorative || undefined}
+    aria-label={decorative ? undefined : (srLabel ?? texts.join(" — "))}
     className={cn(
       "relative mx-auto h-16 w-full max-w-3xl text-center font-sans text-[40pt] font-bold leading-none [filter:url(#threshold)_blur(0.6px)] md:h-24 lg:text-[6rem]",
       className,

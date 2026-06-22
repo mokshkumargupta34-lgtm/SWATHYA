@@ -333,7 +333,7 @@ export const AntiGravityCanvas: React.FC = () => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <canvas ref={canvasRef} className="block w-full h-full" />
+      <canvas ref={canvasRef} aria-hidden="true" className="block w-full h-full" />
     </div>
   );
 };

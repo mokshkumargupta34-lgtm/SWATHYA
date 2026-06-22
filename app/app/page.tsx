@@ -81,6 +81,8 @@ export default function DashboardPage() {
 
   return (
     <PageContainer>
+      <h1 className="sr-only">Care Console — Overview</h1>
+
       {/* Stat row */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {data

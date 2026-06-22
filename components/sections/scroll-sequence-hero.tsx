@@ -284,7 +284,7 @@ export function ScrollSequenceHero() {
   return (
     <section ref={wrapRef} className="relative h-[420vh] bg-[#02101a]">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+        <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full" />
 
         {/* Overlay */}
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
@@ -293,9 +293,13 @@ export function ScrollSequenceHero() {
             Health · Wellness · Care Access
           </span>
 
+          {/* The single page <h1>; the morphing text below is decorative. */}
+          <h1 className="sr-only">
+            SWASTHYA — Health, Wellness and Care Access
+          </h1>
           <MorphingText
             texts={MORPH_TEXTS}
-            srLabel="SWASTHYA — Health, Wellness and Care Access"
+            decorative
             className="!h-20 text-white md:!h-28 [&_span]:!text-white"
           />
 
