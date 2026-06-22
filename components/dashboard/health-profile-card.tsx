@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/client";
+import { readLocalHealth } from "@/lib/health-local";
 
 interface Health {
   date_of_birth: string | null;
@@ -83,6 +84,8 @@ export function HealthProfileCard() {
   React.useEffect(() => {
     let active = true;
     if (!supabase) {
+      // Mock mode: reflect whatever onboarding stored locally.
+      setH(readLocalHealth());
       setLoading(false);
       return;
     }

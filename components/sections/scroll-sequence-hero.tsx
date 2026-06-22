@@ -295,6 +295,7 @@ export function ScrollSequenceHero() {
 
           <MorphingText
             texts={MORPH_TEXTS}
+            srLabel="SWASTHYA — Health, Wellness and Care Access"
             className="!h-20 text-white md:!h-28 [&_span]:!text-white"
           />
 
@@ -320,7 +321,7 @@ export function ScrollSequenceHero() {
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-5">
-            <Link href="/login" className="no-underline">
+            <Link href="/signup" className="no-underline">
               <FrameButton as="button" variant="default" glow>
                 Get Care Now
               </FrameButton>

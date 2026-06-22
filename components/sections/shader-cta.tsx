@@ -22,7 +22,7 @@ export function ShaderCta() {
         buttons={{
           primary: {
             text: "Get Care Now",
-            onClick: () => router.push("/login"),
+            onClick: () => router.push("/signup"),
           },
           secondary: {
             text: "Compare Plans",

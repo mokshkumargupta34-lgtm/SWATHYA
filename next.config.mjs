@@ -2,12 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   eslint: { ignoreDuringBuilds: true },
-  images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "ui.aceternity.com" },
-      { protocol: "https", hostname: "images.unsplash.com" },
-    ],
-  },
 };
 
 export default nextConfig;

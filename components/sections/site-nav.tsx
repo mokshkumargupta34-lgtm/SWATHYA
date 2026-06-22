@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { HeartPulse } from "lucide-react";
+import { HeartPulse, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
@@ -13,6 +13,7 @@ const LINKS = [
 
 export function SiteNav() {
   const [scrolled, setScrolled] = React.useState(false);
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -20,6 +21,14 @@ export function SiteNav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Close the mobile menu on Escape for keyboard users.
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   return (
     <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
@@ -49,7 +58,7 @@ export function SiteNav() {
         <div className="flex items-center gap-2">
           <Link
             href="/login"
-            className="rounded-full px-4 py-2 text-sm font-medium text-white/80 transition-colors hover:text-white"
+            className="hidden rounded-full px-4 py-2 text-sm font-medium text-white/80 transition-colors hover:text-white sm:inline-flex"
           >
             Log in
           </Link>
@@ -59,8 +68,42 @@ export function SiteNav() {
           >
             Get started
           </Link>
+          <button
+            type="button"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+            className="ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10 md:hidden"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="absolute inset-x-4 top-[72px] z-50 rounded-3xl border border-white/15 bg-[#04141d]/95 p-4 text-white shadow-2xl shadow-black/40 backdrop-blur-xl md:hidden">
+          <div className="flex flex-col">
+            {LINKS.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                onClick={() => setMenuOpen(false)}
+                className="rounded-xl px-4 py-3 text-base font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                {l.label}
+              </a>
+            ))}
+            <Link
+              href="/login"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-xl px-4 py-3 text-base font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              Log in
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

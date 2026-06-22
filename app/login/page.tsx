@@ -23,7 +23,7 @@ const PHASES = [
 function LoginInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/dashboard";
+  const redirectTo = searchParams.get("redirect") || "/app";
 
   // Browser Supabase client (null when the project isn't configured yet).
   const supabase = React.useMemo(
@@ -72,6 +72,32 @@ function LoginInner() {
     // On success the browser is redirected to the provider.
   };
 
+  const handleCredentials = async (email: string, password: string) => {
+    if (!supabase) {
+      setAuthenticating(true);
+      return;
+    }
+    setPending(true);
+    setMessage(null);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setPending(false);
+      setMessage({
+        type: "error",
+        text:
+          error.message === "Email not confirmed"
+            ? "Your email isn't confirmed yet — check your inbox, or disable email confirmation in Supabase."
+            : error.message === "Invalid login credentials"
+              ? "Wrong email or password. Try again, or create an account."
+              : error.message,
+      });
+      return;
+    }
+    // Session cookie is now set; let the server pick it up and head to the app.
+    router.push(redirectTo);
+    router.refresh();
+  };
+
   const handleEmail = async (email: string) => {
     if (!supabase) {
       setAuthenticating(true);
@@ -99,6 +125,7 @@ function LoginInner() {
       <AuthPage
         onProvider={handleProvider}
         onEmail={handleEmail}
+        onCredentials={handleCredentials}
         pending={pending}
         message={message}
       />

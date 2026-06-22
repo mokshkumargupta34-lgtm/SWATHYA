@@ -1,4 +1,3 @@
-//@ts-nocheck
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
@@ -92,6 +91,8 @@ const useMorphingText = (texts: string[]) => {
 interface MorphingTextProps {
   className?: string;
   texts: string[];
+  /** Stable label announced to assistive tech in place of the morphing text. */
+  srLabel?: string;
 }
 
 const Texts: React.FC<Pick<MorphingTextProps, "texts">> = ({ texts }) => {
@@ -127,14 +128,23 @@ const SvgFilters: React.FC = () => (
   </svg>
 );
 
-const MorphingText: React.FC<MorphingTextProps> = ({ texts, className }) => (
+const MorphingText: React.FC<MorphingTextProps> = ({
+  texts,
+  className,
+  srLabel,
+}) => (
   <div
+    role="img"
+    aria-label={srLabel ?? texts.join(" — ")}
     className={cn(
       "relative mx-auto h-16 w-full max-w-3xl text-center font-sans text-[40pt] font-bold leading-none [filter:url(#threshold)_blur(0.6px)] md:h-24 lg:text-[6rem]",
       className,
     )}
   >
-    <Texts texts={texts} />
+    {/* Animated spans swap textContent every frame — hide them from a11y. */}
+    <div aria-hidden="true" className="contents">
+      <Texts texts={texts} />
+    </div>
     <SvgFilters />
   </div>
 );

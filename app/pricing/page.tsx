@@ -28,7 +28,8 @@ export default function PricingPage() {
         </p>
       </div>
 
-      <PricingSection />
+      {/* Heading lives in the page hero above; suppress the section's own header. */}
+      <PricingSection title="" description="" />
 
       <CinematicFooter />
     </main>

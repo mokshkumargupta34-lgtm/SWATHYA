@@ -269,3 +269,27 @@
   background: color-mix(in oklab, var(--primary) 55%, transparent);
   border-radius: 999px;
 }
+
+/* ------------------------------------------------------------------ */
+/* Accessibility: respect the OS "reduce motion" preference.           */
+/* Neutralises CSS keyframe loops and long transitions so the site is  */
+/* usable for motion-sensitive and low-power users. JS-driven canvas/  */
+/* WebGL scenes additionally bail out via usePrefersReducedMotion.     */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Hide the always-on decorative footer loops outright. */
+  .animate-footer-breathe,
+  .animate-footer-scroll-marquee,
+  .animate-footer-heartbeat {
+    animation: none !important;
+  }
+}

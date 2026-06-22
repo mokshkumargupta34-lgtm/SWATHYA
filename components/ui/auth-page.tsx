@@ -5,17 +5,19 @@ import { motion } from 'framer-motion';
 import { Button } from './button';
 
 import {
-	AppleIcon,
 	AtSignIcon,
 	ChevronLeftIcon,
+	EyeIcon,
+	EyeOffIcon,
 	GithubIcon,
 	HeartPulseIcon,
 	Loader2Icon,
+	LockIcon,
 } from 'lucide-react';
 import { Input } from './input';
 import { cn } from '@/lib/utils';
 
-export type AuthProvider = 'google' | 'apple' | 'github';
+export type AuthProvider = 'google' | 'github';
 
 export interface AuthMessage {
 	type: 'info' | 'error';
@@ -25,18 +27,27 @@ export interface AuthMessage {
 export function AuthPage({
 	onProvider,
 	onEmail,
+	onCredentials,
 	pending = false,
 	message,
 }: {
 	onProvider?: (provider: AuthProvider) => void;
 	onEmail?: (email: string) => void;
+	onCredentials?: (email: string, password: string) => void;
 	pending?: boolean;
 	message?: AuthMessage | null;
 }) {
 	const [email, setEmail] = React.useState('');
+	const [password, setPassword] = React.useState('');
+	const [showPassword, setShowPassword] = React.useState(false);
 
-	const submitEmail = (e: React.FormEvent) => {
+	const submitCredentials = (e: React.FormEvent) => {
 		e.preventDefault();
+		if (!email.trim() || !password) return;
+		onCredentials?.(email.trim(), password);
+	};
+
+	const sendMagicLink = () => {
 		if (!email.trim()) return;
 		onEmail?.(email.trim());
 	};
@@ -58,6 +69,9 @@ export function AuthPage({
 						</p>
 						<footer className="font-mono text-sm font-semibold">
 							~ Anjali, ASHA worker
+							<span className="ml-2 font-sans font-normal text-muted-foreground">
+								(illustrative)
+							</span>
 						</footer>
 					</blockquote>
 				</div>
@@ -110,16 +124,6 @@ export function AuthPage({
 							size="lg"
 							className="w-full"
 							disabled={pending}
-							onClick={() => onProvider?.('apple')}
-						>
-							<AppleIcon className="size-4 me-2" />
-							Continue with Apple
-						</Button>
-						<Button
-							type="button"
-							size="lg"
-							className="w-full"
-							disabled={pending}
 							onClick={() => onProvider?.('github')}
 						>
 							<GithubIcon className="size-4 me-2" />
@@ -129,15 +133,16 @@ export function AuthPage({
 
 					<AuthSeparator />
 
-					<form className="space-y-2" onSubmit={submitEmail}>
+					<form className="space-y-2" onSubmit={submitCredentials}>
 						<p className="text-muted-foreground text-start text-xs">
-							Enter your email address to sign in or create an account
+							Sign in with your email and password
 						</p>
 						<div className="relative h-max">
 							<Input
 								placeholder="your.email@example.com"
 								className="peer ps-9"
 								type="email"
+								autoComplete="email"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 								disabled={pending}
@@ -147,12 +152,49 @@ export function AuthPage({
 							</div>
 						</div>
 
+						<div className="relative h-max">
+							<Input
+								placeholder="Your password"
+								className="peer px-9"
+								type={showPassword ? 'text' : 'password'}
+								autoComplete="current-password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								disabled={pending}
+							/>
+							<div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+								<LockIcon className="size-4" aria-hidden="true" />
+							</div>
+							<button
+								type="button"
+								onClick={() => setShowPassword((v) => !v)}
+								className="text-muted-foreground hover:text-foreground absolute inset-y-0 end-0 flex items-center justify-center pe-3 transition-colors"
+								aria-label={showPassword ? 'Hide password' : 'Show password'}
+								tabIndex={-1}
+							>
+								{showPassword ? (
+									<EyeOffIcon className="size-4" />
+								) : (
+									<EyeIcon className="size-4" />
+								)}
+							</button>
+						</div>
+
 						<Button type="submit" className="w-full" disabled={pending}>
 							{pending ? (
 								<Loader2Icon className="size-4 me-2 animate-spin" />
 							) : null}
-							<span>Continue With Email</span>
+							<span>Sign In</span>
 						</Button>
+
+						<button
+							type="button"
+							onClick={sendMagicLink}
+							disabled={pending}
+							className="text-muted-foreground hover:text-primary w-full text-center text-xs underline underline-offset-4 transition-colors disabled:opacity-50"
+						>
+							Prefer a magic link? Email me a sign-in link instead
+						</button>
 					</form>
 
 					{message && (
@@ -181,14 +223,14 @@ export function AuthPage({
 					<p className="text-muted-foreground mt-8 text-sm">
 						By clicking continue, you agree to our{' '}
 						<a
-							href="#"
+							href="/terms"
 							className="hover:text-primary underline underline-offset-4"
 						>
 							Terms of Service
 						</a>{' '}
 						and{' '}
 						<a
-							href="#"
+							href="/privacy"
 							className="hover:text-primary underline underline-offset-4"
 						>
 							Privacy Policy

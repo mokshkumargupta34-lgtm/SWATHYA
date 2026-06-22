@@ -3,7 +3,7 @@
 import { buttonVariants } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { useMediaQuery, usePrefersReducedMotion } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Check, Star } from "lucide-react";
@@ -38,11 +38,12 @@ All plans include access to our platform, lead generation tools, and dedicated s
 }: PricingProps) {
   const [isMonthly, setIsMonthly] = useState(true);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const reduceMotion = usePrefersReducedMotion();
   const switchRef = useRef<HTMLButtonElement>(null);
 
   const handleToggle = (checked: boolean) => {
     setIsMonthly(!checked);
-    if (checked && switchRef.current) {
+    if (checked && !reduceMotion && switchRef.current) {
       const rect = switchRef.current.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
@@ -66,14 +67,20 @@ All plans include access to our platform, lead generation tools, and dedicated s
 
   return (
     <div className="container mx-auto py-20">
-      <div className="text-center space-y-4 mb-12">
-        <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          {title}
-        </h2>
-        <p className="text-muted-foreground text-lg whitespace-pre-line">
-          {description}
-        </p>
-      </div>
+      {(title || description) && (
+        <div className="text-center space-y-4 mb-12">
+          {title && (
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+              {title}
+            </h2>
+          )}
+          {description && (
+            <p className="text-muted-foreground text-lg whitespace-pre-line">
+              {description}
+            </p>
+          )}
+        </div>
+      )}
 
       <div className="flex justify-center mb-10">
         <label className="relative inline-flex items-center cursor-pointer">
@@ -147,7 +154,7 @@ All plans include access to our platform, lead generation tools, and dedicated s
                     }
                     format={{
                       style: "currency",
-                      currency: "USD",
+                      currency: "INR",
                       minimumFractionDigits: 0,
                       maximumFractionDigits: 0,
                     }}

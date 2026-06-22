@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { HeartPulse, Loader2 } from "lucide-react";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/client";
+import { readLocalHealth, writeLocalHealth } from "@/lib/health-local";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -92,6 +93,28 @@ export function HealthOnboarding() {
   React.useEffect(() => {
     let active = true;
     if (!supabase) {
+      // Mock mode: rehydrate any answers saved locally so editing works.
+      const local = readLocalHealth();
+      if (local) {
+        setS({
+          date_of_birth: local.date_of_birth ?? "",
+          gender: local.gender ?? "",
+          blood_group: local.blood_group ?? "",
+          height_cm: local.height_cm?.toString() ?? "",
+          weight_kg: local.weight_kg?.toString() ?? "",
+          phone: local.phone ?? "",
+          location: local.location ?? "",
+          preferred_language: local.preferred_language ?? "",
+          chronic_conditions: local.chronic_conditions ?? [],
+          allergies: local.allergies ?? "",
+          current_medications: local.current_medications ?? "",
+          is_pregnant: local.is_pregnant ?? false,
+          stress_level: local.stress_level ?? null,
+          emergency_contact_name: local.emergency_contact_name ?? "",
+          emergency_contact_phone: local.emergency_contact_phone ?? "",
+          notes: local.notes ?? "",
+        });
+      }
       setLoading(false);
       return;
     }
@@ -154,7 +177,26 @@ export function HealthOnboarding() {
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!supabase || !userId) {
-      router.push("/dashboard");
+      // Mock mode: persist locally instead of dropping the data on the floor.
+      writeLocalHealth({
+        date_of_birth: s.date_of_birth || null,
+        gender: s.gender || null,
+        blood_group: s.blood_group || null,
+        height_cm: s.height_cm ? Number(s.height_cm) : null,
+        weight_kg: s.weight_kg ? Number(s.weight_kg) : null,
+        phone: s.phone || null,
+        location: s.location || null,
+        preferred_language: s.preferred_language || null,
+        chronic_conditions: s.chronic_conditions,
+        allergies: s.allergies || null,
+        current_medications: s.current_medications || null,
+        is_pregnant: s.is_pregnant,
+        stress_level: s.stress_level,
+        emergency_contact_name: s.emergency_contact_name || null,
+        emergency_contact_phone: s.emergency_contact_phone || null,
+        notes: s.notes || null,
+      });
+      router.push("/app");
       return;
     }
     setSaving(true);
@@ -186,11 +228,11 @@ export function HealthOnboarding() {
         /relation .*health_profiles.* does not exist|schema cache|could not find the table/i.test(
           error.message,
         )
-          ? "Run supabase/schema.sql in your Supabase SQL editor to create the health_profiles table."
+          ? "We couldn’t save your profile right now. Please try again later."
           : error.message,
       );
     } else {
-      router.push("/dashboard");
+      router.push("/app");
       router.refresh();
     }
   };
@@ -452,7 +494,7 @@ export function HealthOnboarding() {
         <div className="mt-8 flex items-center justify-between gap-3">
           <button
             type="button"
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push("/app")}
             className="cursor-pointer text-sm text-muted-foreground hover:text-foreground"
           >
             Skip for now

@@ -19,3 +19,11 @@ export function useMediaQuery(query: string): boolean {
 
   return matches;
 }
+
+/**
+ * True when the user has asked the OS to minimize non-essential motion.
+ * Use to skip confetti, heavy canvas/WebGL loops and auto-playing animation.
+ */
+export function usePrefersReducedMotion(): boolean {
+  return useMediaQuery("(prefers-reduced-motion: reduce)");
+}

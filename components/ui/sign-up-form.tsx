@@ -34,9 +34,11 @@ export function SignUpForm({
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [agreed, setAgreed] = React.useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!agreed) return;
     onSubmit?.({ firstName, lastName, email, password });
   };
 
@@ -124,7 +126,35 @@ export function SignUpForm({
               <p className="text-muted-foreground text-xs">At least 6 characters.</p>
             </div>
 
-            <Button className="w-full gap-2" disabled={pending}>
+            <label className="flex cursor-pointer items-start gap-2 text-sm text-muted-foreground">
+              <input
+                type="checkbox"
+                required
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                disabled={pending}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+              />
+              <span>
+                I agree to the{" "}
+                <Link
+                  href="/terms"
+                  className="text-primary underline underline-offset-4"
+                >
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link
+                  href="/privacy"
+                  className="text-primary underline underline-offset-4"
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </span>
+            </label>
+
+            <Button className="w-full gap-2" disabled={pending || !agreed}>
               {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Create Account
             </Button>

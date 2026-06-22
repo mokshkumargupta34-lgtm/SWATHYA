@@ -4,7 +4,7 @@
 import { cn } from "@/lib/utils";
 import type { ComponentPropsWithoutRef } from "react";
 import React from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 
 type ButtonVariant = "outline" | "default" | "secondary";
 

@@ -16,8 +16,16 @@ Built with **Next.js 14 (App Router)**, **TypeScript**, **Tailwind CSS v4**, **F
 
 - **Scrollytelling hero** — a scroll-scrubbed HTML5 Canvas sequence that narrates the five focus areas, with a multilingual morphing headline.
 - **Immersive sections** — three.js anomaly, interactive particle "care mesh", a scroll-reveal dashboard preview, and a WebGL2 shader CTA.
-- **Pricing**, **animated cinematic footer**, and a feature-rich **dashboard** (tele-care, maternal tracking, mental-health check-in, medicine search, portable records).
-- **Supabase authentication** — magic-link email + Google/GitHub OAuth, protected dashboard, with a graceful front-end mock fallback until keys are set.
+- **Pricing**, **animated cinematic footer**, and a marketing landing page.
+- **Care Console** (`/app`) — a real, database-backed authenticated product:
+  - **Dashboard** — live stats, a 7-day consultation chart and the upcoming care queue.
+  - **Records** — create / list / delete portable health records.
+  - **Consults** — book, list and cancel tele-consultations (general, specialist, mental health, maternal).
+  - **Medicines** — search the catalog for nearby-pharmacy stock with a cheaper **generic alternative** suggestion.
+  - **Family** — add / remove members, enforcing plan limits (Individual = self, Family+ = 6, Community = unlimited).
+  - **Settings** — edit profile, preferred language (8 languages) and switch plan.
+- **REST API** under `/app/api/*` — every route is zod-validated and session-scoped; data isolation is enforced at the database level by Supabase **Row Level Security**.
+- **Supabase authentication** — magic-link email + password signup + Google/GitHub OAuth, protected `/app/*`, with a graceful front-end mock fallback until keys are set.
 - Performance-tuned: every canvas/WebGL loop pauses when off-screen.
 
 ## Getting started
@@ -30,12 +38,15 @@ npm run dev
 
 Open <https://swathya.vercel.app/>.
 
-### Enabling real auth (optional)
+### Enabling real auth + the Care Console (required for `/app`)
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. Put the **Project URL** and **anon/public key** (Settings → API) into `.env.local`.
 3. In Supabase → Authentication → URL Configuration, set Site URL `http://localhost:3000` and add Redirect URL `http://localhost:3000/auth/callback`.
-4. Restart the dev server. (Without keys, login uses a front-end mock.)
+4. **Run the schema + seed:** open Supabase → SQL Editor → New query, paste the entire contents of [`supabase/schema.sql`](supabase/schema.sql) and run it. This is idempotent (safe to re-run) and creates the `profiles`, `health_profiles`, `health_records`, `consults`, `family_members` tables (all row-level-secured) plus the medicine catalog (`pharmacies`, `medicines`, `medicine_stock`) and seeds ~6 pharmacies and 15 medicines.
+5. Restart the dev server, then sign up at `/signup`. (Without keys, login uses a front-end mock; the `/app` API returns `503` until the schema is run.)
+
+> The Care Console lives under `/app`. `/dashboard` permanently redirects there.
 
 ## Scripts
 

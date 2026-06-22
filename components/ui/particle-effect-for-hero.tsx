@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { MousePointer2, Info, ArrowRight } from 'lucide-react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 // --- Types ---
 
@@ -52,7 +51,6 @@ const randomRange = (min: number, max: number) => Math.random() * (max - min) + 
 export const AntiGravityCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [debugInfo, setDebugInfo] = useState({ count: 0, fps: 0 });
 
   // Mutable state refs to avoid re-renders during animation loop
   const particlesRef = useRef<Particle[]>([]);
@@ -102,8 +100,6 @@ export const AntiGravityCanvas: React.FC = () => {
       });
     }
     backgroundParticlesRef.current = newBgParticles;
-
-    setDebugInfo(prev => ({ ...prev, count: particleCount + bgCount }));
   }, []);
 
   // Animation Loop
@@ -338,78 +334,6 @@ export const AntiGravityCanvas: React.FC = () => {
       onMouseLeave={handleMouseLeave}
     >
       <canvas ref={canvasRef} className="block w-full h-full" />
-
-      <div className="absolute bottom-4 right-4 pointer-events-none text-xs text-white/20 font-mono text-right">
-        <p>{debugInfo.count} entities</p>
-      </div>
     </div>
   );
 };
-
-const Navigation: React.FC = () => {
-    return (
-        <nav className="absolute top-0 left-0 w-full z-20 flex justify-between items-center p-6 md:p-8">
-            <div className="flex items-center space-x-2">
-                 <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                    <span className="font-bold text-black text-lg">S</span>
-                 </div>
-                 <span className="text-white font-medium tracking-wide text-lg">SWASTHYA</span>
-            </div>
-            <div className="hidden md:flex space-x-8 text-sm font-medium text-white/70">
-                <a href="#" className="hover:text-white transition-colors">Outreach</a>
-                <a href="#" className="hover:text-white transition-colors">Stories</a>
-                <a href="#" className="hover:text-white transition-colors">About</a>
-            </div>
-            <button className="text-white/80 hover:text-white transition-colors">
-                <Info size={24} />
-            </button>
-        </nav>
-    )
-}
-
-const HeroContent: React.FC = () => {
-    return (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none px-4">
-            <div className="max-w-4xl w-full text-center space-y-8">
-                <div className="inline-block animate-fade-in-up">
-                    <span className="py-1 px-3 border border-white/20 rounded-full text-xs font-mono text-white/60 tracking-widest uppercase bg-white/5 backdrop-blur-sm">
-                        Health that reaches everyone
-                    </span>
-                </div>
-
-                <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40 tracking-tighter mix-blend-difference">
-                    Every<br/>Village
-                </h1>
-
-                <p className="max-w-2xl mx-auto text-lg md:text-xl text-white/60 font-light leading-relaxed">
-                    A connected mesh of community health workers, clinics and families &mdash; carrying care across every last mile.
-                </p>
-
-                <div className="pt-8 pointer-events-auto">
-                    <button className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold tracking-wide overflow-hidden transition-transform hover:scale-105 active:scale-95 cursor-pointer">
-                        <span className="relative z-10">Join the Mission</span>
-                        <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
-                        <div className="absolute inset-0 bg-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out opacity-10"></div>
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-// --- Main App Component ---
-
-export default function App() {
-  return (
-    <div className="relative w-full h-screen bg-black overflow-hidden selection:bg-blue-500 selection:text-white">
-      <AntiGravityCanvas />
-      <Navigation />
-      <HeroContent />
-
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30 animate-pulse pointer-events-none">
-         <span className="text-[10px] uppercase tracking-[0.2em]">Interact</span>
-         <MousePointer2 size={16} />
-      </div>
-    </div>
-  );
-}

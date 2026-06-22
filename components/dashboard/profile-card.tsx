@@ -60,7 +60,7 @@ export function ProfileCard() {
       if (error) {
         setNotice(
           tableMissing(error.message)
-            ? "Run supabase/schema.sql in your Supabase SQL editor to enable profiles."
+            ? "Your profile isn’t available right now. Please try again later."
             : error.message,
         );
       } else if (data) {
@@ -114,7 +114,7 @@ export function ProfileCard() {
       setUploading(false);
       setNotice(
         /bucket not found/i.test(upErr.message)
-          ? "Create the 'avatars' bucket by running supabase/schema.sql."
+          ? "Photo uploads aren’t available right now. Please try again later."
           : upErr.message,
       );
       return;
@@ -141,7 +141,9 @@ export function ProfileCard() {
   if (!supabase) {
     return (
       <p className="text-sm text-muted-foreground">
-        Add your Supabase keys to <code className="font-mono">.env.local</code>{" "}
+        <a href="/login" className="text-primary underline underline-offset-4">
+          Sign in
+        </a>{" "}
         to manage your profile.
       </p>
     );
