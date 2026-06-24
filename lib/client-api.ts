@@ -53,6 +53,9 @@ export type Consult = {
   language: string;
   notes: string | null;
   doctor_name: string | null;
+  doctor_notes?: string | null;
+  prescription?: string | null;
+  patient_name?: string | null;
   created_at: string;
 };
 

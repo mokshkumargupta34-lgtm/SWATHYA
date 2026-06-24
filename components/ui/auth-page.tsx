@@ -220,6 +220,16 @@ export function AuthPage({
 						</a>
 					</p>
 
+					<p className="text-muted-foreground text-center text-sm">
+						Are you a doctor?{' '}
+						<a
+							href="/doctor/login"
+							className="text-primary underline underline-offset-4"
+						>
+							Doctor portal
+						</a>
+					</p>
+
 					<p className="text-muted-foreground mt-8 text-sm">
 						By clicking continue, you agree to our{' '}
 						<a

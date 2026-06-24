@@ -4,13 +4,6 @@ import { createConsultSchema } from "@/lib/validators";
 
 export const dynamic = "force-dynamic";
 
-const DOCTORS: Record<string, string> = {
-  GENERAL: "Dr. Anand Rao",
-  SPECIALIST: "Dr. Meera Iyer",
-  MENTAL: "Dr. Kabir Sen",
-  MATERNAL: "Dr. Leela Nair",
-};
-
 // GET /api/consults — all of the user's consults, soonest first.
 export async function GET() {
   const ctx = await requireUser();
@@ -38,6 +31,20 @@ export async function POST(request: Request) {
   if ("response" in parsed) return parsed.response;
   const body = parsed.data;
 
+  // Snapshot the patient's name onto the consult so doctors can see who they're
+  // treating without reading the patient's profile row.
+  const { data: profile } = await ctx.supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("id", ctx.user.id)
+    .maybeSingle();
+  const patientName =
+    profile?.full_name ||
+    (ctx.user.user_metadata?.full_name as string | undefined) ||
+    ctx.user.email ||
+    "Patient";
+
+  // Booked unassigned → enters the shared queue for doctors of this specialty.
   const { data, error } = await ctx.supabase
     .from("consults")
     .insert({
@@ -47,7 +54,7 @@ export async function POST(request: Request) {
       scheduled_at: body.scheduledAt,
       language: body.language,
       notes: body.notes || null,
-      doctor_name: DOCTORS[body.type] ?? "Dr. Anand Rao",
+      patient_name: patientName,
     })
     .select()
     .single();

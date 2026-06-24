@@ -27,9 +27,12 @@ export default async function AppLayout({
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("full_name, plan")
+      .select("full_name, plan, role")
       .eq("id", authUser.id)
       .maybeSingle();
+
+    // Doctors belong in the doctor console, not the patient app.
+    if (profile?.role === "doctor") redirect("/doctor");
 
     user = {
       name:

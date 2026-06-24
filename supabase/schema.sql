@@ -346,3 +346,95 @@ join public.medicines  m on m.name = s.med_name
 join public.pharmacies p on p.name = s.ph_name
 on conflict (medicine_id, pharmacy_id) do update
   set quantity = excluded.quantity, price = excluded.price;
+
+-- ============================================================================
+-- Doctor portal: roles, specialties and consult assignment.
+-- A patient books a consult (unassigned) → it enters the shared queue for
+-- doctors whose specialty matches the consult type → a doctor accepts and
+-- completes it, attaching notes + a prescription that flow back to the patient.
+-- ============================================================================
+
+-- Role + specialty on the profile. Patients stay 'patient'; doctors carry a
+-- specialty matching a consult type (GENERAL | SPECIALIST | MENTAL | MATERNAL).
+alter table public.profiles add column if not exists role      text not null default 'patient';
+alter table public.profiles add column if not exists specialty text;
+
+alter table public.consults add column if not exists doctor_id    uuid references auth.users (id) on delete set null;
+alter table public.consults add column if not exists doctor_notes text;
+alter table public.consults add column if not exists prescription text;
+alter table public.consults add column if not exists patient_name text;
+create index if not exists consults_doctor_idx on public.consults (doctor_id);
+create index if not exists consults_type_status_idx on public.consults (type, status);
+
+-- New signups may declare themselves a doctor (+ specialty) via signup metadata.
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, email, full_name, avatar_url, role, specialty)
+  values (
+    new.id,
+    new.email,
+    coalesce(new.raw_user_meta_data ->> 'full_name', new.raw_user_meta_data ->> 'name'),
+    new.raw_user_meta_data ->> 'avatar_url',
+    coalesce(new.raw_user_meta_data ->> 'role', 'patient'),
+    new.raw_user_meta_data ->> 'specialty'
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+-- Doctors can SELECT consults in their specialty (the shared queue) plus any
+-- already assigned to them. The patient-owner policies from earlier still apply
+-- (RLS policies are OR-combined), so patients keep seeing only their own rows.
+drop policy if exists "Doctors see specialty consults" on public.consults;
+create policy "Doctors see specialty consults"
+  on public.consults for select
+  using (
+    exists (
+      select 1 from public.profiles p
+      where p.id = auth.uid()
+        and p.role = 'doctor'
+        and (p.specialty = consults.type or consults.doctor_id = auth.uid())
+    )
+  );
+
+drop policy if exists "Doctors update specialty consults" on public.consults;
+create policy "Doctors update specialty consults"
+  on public.consults for update
+  using (
+    exists (
+      select 1 from public.profiles p
+      where p.id = auth.uid()
+        and p.role = 'doctor'
+        and (p.specialty = consults.type or consults.doctor_id = auth.uid())
+    )
+  )
+  with check (
+    exists (
+      select 1 from public.profiles p
+      where p.id = auth.uid()
+        and p.role = 'doctor'
+        and (p.specialty = consults.type or consults.doctor_id = auth.uid())
+    )
+  );
+
+-- A doctor may read the health profile of a patient who has a consult in the
+-- doctor's specialty (so they can prepare). Patients still only see their own.
+drop policy if exists "Doctors view patient health for their consults" on public.health_profiles;
+create policy "Doctors view patient health for their consults"
+  on public.health_profiles for select
+  using (
+    exists (
+      select 1
+      from public.consults c
+      join public.profiles p on p.id = auth.uid()
+      where c.user_id = health_profiles.id
+        and p.role = 'doctor'
+        and (p.specialty = c.type or c.doctor_id = auth.uid())
+    )
+  );

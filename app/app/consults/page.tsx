@@ -182,7 +182,7 @@ function ConsultRow({
         ? "bg-rose-500/10 text-rose-600"
         : "bg-muted text-muted-foreground";
   return (
-    <SectionCard className="flex flex-wrap items-center gap-4 p-5">
+    <SectionCard className="flex flex-wrap items-start gap-4 p-5">
       <span className={cn("flex h-11 w-11 items-center justify-center rounded-2xl", meta.c)}>
         <meta.icon className="h-5 w-5" />
       </span>
@@ -190,10 +190,30 @@ function ConsultRow({
         <p className="font-medium text-foreground">{meta.label}</p>
         <p className="text-xs text-muted-foreground">
           {formatWhen(consult.scheduled_at)} · {languageLabel(consult.language)}
-          {consult.doctor_name ? ` · ${consult.doctor_name}` : ""}
+          {consult.doctor_name
+            ? ` · ${consult.doctor_name}`
+            : consult.status === "SCHEDULED"
+              ? " · Awaiting a doctor"
+              : ""}
         </p>
         {consult.notes ? (
           <p className="mt-1 text-sm text-muted-foreground">{consult.notes}</p>
+        ) : null}
+        {consult.status === "COMPLETED" && (consult.doctor_notes || consult.prescription) ? (
+          <div className="mt-2 space-y-1.5 text-sm">
+            {consult.doctor_notes ? (
+              <p className="text-muted-foreground">
+                <span className="font-medium text-foreground">Doctor&rsquo;s notes:</span>{" "}
+                {consult.doctor_notes}
+              </p>
+            ) : null}
+            {consult.prescription ? (
+              <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-foreground">
+                <span className="font-medium text-emerald-600">Prescription:</span>{" "}
+                {consult.prescription}
+              </p>
+            ) : null}
+          </div>
         ) : null}
       </div>
       <span className={cn("rounded-full px-3 py-1 text-xs font-medium", statusStyle)}>

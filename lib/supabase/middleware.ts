@@ -2,9 +2,9 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from "./config";
 
-const PROTECTED = ["/app", "/dashboard", "/onboarding"];
+const PROTECTED = ["/app", "/doctor", "/dashboard", "/onboarding"];
 // Auth screens an already-signed-in user shouldn't see.
-const AUTH_PAGES = ["/login", "/signup"];
+const AUTH_PAGES = ["/login", "/signup", "/doctor/login", "/doctor/signup"];
 
 /**
  * Refreshes the Supabase auth session on every request and guards protected
@@ -37,12 +37,14 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const needsAuth = PROTECTED.some((p) => path === p || path.startsWith(`${p}/`));
   const isAuthPage = AUTH_PAGES.some((p) => path === p);
+  const isDoctorArea = path === "/doctor" || path.startsWith("/doctor/");
+  const needsAuth =
+    !isAuthPage && PROTECTED.some((p) => path === p || path.startsWith(`${p}/`));
 
   if (needsAuth && !user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = isDoctorArea ? "/doctor/login" : "/login";
     url.searchParams.set("redirect", path);
     return NextResponse.redirect(url);
   }
@@ -50,7 +52,7 @@ export async function updateSession(request: NextRequest) {
   // Signed-in users shouldn't sit on the login / signup screens.
   if (isAuthPage && user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/app";
+    url.pathname = isDoctorArea ? "/doctor" : "/app";
     url.search = "";
     return NextResponse.redirect(url);
   }

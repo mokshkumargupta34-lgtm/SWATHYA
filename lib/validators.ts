@@ -75,3 +75,30 @@ export const patchProfileSchema = z.object({
 export const patchPlanSchema = z.object({
   plan: z.enum(PLANS),
 });
+
+// ---- Doctor portal ---------------------------------------------------------
+// A doctor's specialty maps 1:1 to a consult type.
+export const SPECIALTIES = CONSULT_TYPES;
+
+export const SPECIALTY_LABELS: Record<(typeof SPECIALTIES)[number], string> = {
+  GENERAL: "General physician",
+  SPECIALIST: "Specialist",
+  MENTAL: "Mental health",
+  MATERNAL: "Maternal & child",
+};
+
+// What a doctor can do to a consult.
+export const doctorActionSchema = z.discriminatedUnion("action", [
+  z.object({ action: z.literal("accept") }),
+  z.object({
+    action: z.literal("complete"),
+    doctorNotes: z.string().trim().max(4000).optional().nullable(),
+    prescription: z.string().trim().max(4000).optional().nullable(),
+  }),
+  z.object({
+    action: z.literal("reschedule"),
+    scheduledAt: z.string().datetime(),
+  }),
+  z.object({ action: z.literal("cancel") }),
+]);
+export type DoctorAction = z.infer<typeof doctorActionSchema>;

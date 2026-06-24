@@ -46,6 +46,45 @@ export function isAuthed(
   return "user" in ctx;
 }
 
+export type DoctorContext = AuthedContext & {
+  specialty: string | null;
+  fullName: string | null;
+};
+
+/**
+ * Like requireUser, but additionally requires the signed-in user to have
+ * role = 'doctor'. Returns the doctor's specialty + name for convenience.
+ * Every /api/doctor route starts with this.
+ */
+export async function requireDoctor(): Promise<
+  DoctorContext | { response: NextResponse }
+> {
+  const ctx = await requireUser();
+  if (!isAuthed(ctx)) return ctx;
+
+  const { data: profile } = await ctx.supabase
+    .from("profiles")
+    .select("role, specialty, full_name")
+    .eq("id", ctx.user.id)
+    .maybeSingle();
+
+  if (!profile || profile.role !== "doctor") {
+    return { response: jsonError(403, "Doctor access only") };
+  }
+  return {
+    ...ctx,
+    specialty: profile.specialty ?? null,
+    fullName: profile.full_name ?? null,
+  };
+}
+
+/** Narrowing helper for the union returned by requireDoctor. */
+export function isDoctor(
+  ctx: DoctorContext | { response: NextResponse },
+): ctx is DoctorContext {
+  return "user" in ctx;
+}
+
 /** Parse a request body with a zod schema, returning a 400 response on failure. */
 export async function parseBody<S extends z.ZodTypeAny>(
   request: Request,
