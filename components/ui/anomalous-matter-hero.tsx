@@ -17,22 +17,25 @@ export function GenerativeArtScene() {
       0.1,
       1000
     );
-    camera.position.z = 3;
+    // Pulled back a touch so the larger sphere fills the frame without clipping.
+    camera.position.z = 3.2;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     currentMount.appendChild(renderer.domElement);
 
-    // Detail 18 keeps the organic flux while cutting vertex count ~12x vs 64.
-    const geometry = new THREE.IcosahedronGeometry(1.2, 18);
+    // Bigger radius so it covers the page; detail 18 keeps the organic flux.
+    const geometry = new THREE.IcosahedronGeometry(2.0, 18);
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
+        uExplode: { value: 1 }, // 0 = sphere intact, 1 = fully disintegrated
         pointLightPos: { value: new THREE.Vector3(0, 0, 5) },
         color: { value: new THREE.Color("#38bdf8") },
       },
       vertexShader: `                uniform float time;
+                uniform float uExplode;
                 varying vec3 vNormal;
                 varying vec3 vPosition;
 
@@ -89,6 +92,20 @@ export function GenerativeArtScene() {
                     vPosition = position;
                     float displacement = snoise(position * 2.0 + time * 0.5) * 0.2;
                     vec3 newPosition = position + normal * displacement;
+
+                    // Scroll-driven disintegration: each vertex drifts along a
+                    // pseudo-random direction (mostly in the screen plane so the
+                    // wireframe fans out across the page) then snaps back.
+                    vec3 rnd = vec3(
+                        snoise(position * 3.0 + 11.0),
+                        snoise(position * 3.0 + 47.0),
+                        snoise(position * 3.0 + 93.0)
+                    );
+                    vec3 scatterDir = normalize(vec3(rnd.x, rnd.y, rnd.z * 0.35) + normal * 0.2);
+                    // a little time-based shimmer while scattered keeps it alive
+                    float drift = uExplode * (1.6 + 0.25 * sin(time * 2.0 + rnd.x * 6.28));
+                    newPosition += scatterDir * drift;
+
                     gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
                 }`,
       fragmentShader: `                uniform vec3 color;
@@ -119,6 +136,24 @@ export function GenerativeArtScene() {
     lightRef.current = pointLight;
     scene.add(pointLight);
 
+    // Scroll progress through the parent section drives the disintegration:
+    // scattered at the section's entry/exit, reformed when it's centered.
+    let targetExplode = 1;
+    const section = currentMount.closest("section");
+    const updateScroll = () => {
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const total = Math.max(rect.height - vh, 1);
+      const scrolled = Math.min(Math.max(-rect.top, 0), total);
+      const progress = scrolled / total; // 0..1 across the sticky scroll
+      // 0 (intact) in the middle, easing up to 1 (scattered) at both ends.
+      let e = Math.abs(progress - 0.5) * 2.0;
+      targetExplode = Math.min(e * e, 1);
+    };
+    updateScroll();
+    window.addEventListener("scroll", updateScroll, { passive: true });
+
     // Pause GPU work entirely when the hero is off-screen or the tab is hidden.
     let visible = true;
     const io = new IntersectionObserver(
@@ -132,6 +167,9 @@ export function GenerativeArtScene() {
       frameId = requestAnimationFrame(animate);
       if (!visible || document.hidden) return;
       material.uniforms.time.value = t * 0.0003;
+      // Smoothly chase the scroll-driven target so it melts apart / reassembles.
+      const cur = material.uniforms.uExplode.value;
+      material.uniforms.uExplode.value = cur + (targetExplode - cur) * 0.06;
       mesh.rotation.y += 0.0005;
       mesh.rotation.x += 0.0002;
       renderer.render(scene, camera);
@@ -142,6 +180,7 @@ export function GenerativeArtScene() {
       camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+      updateScroll();
     };
 
     const handleMouseMove = (e) => {
@@ -164,6 +203,7 @@ export function GenerativeArtScene() {
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", updateScroll);
       if (currentMount && renderer.domElement.parentNode === currentMount) {
         currentMount.removeChild(renderer.domElement);
       }
@@ -182,27 +222,31 @@ export function AnomalousMatterHero({
   description = "A new form of digital existence has been observed. It responds to stimuli, changes form, and exudes an unknown energy. Further study is required.",
 }) {
   return (
+    // Taller than the viewport so there's scroll room for the disintegration.
     <section
       aria-label="Youth mental health"
-      className="relative w-full h-screen bg-background text-foreground overflow-hidden"
+      className="relative w-full h-[230vh] bg-background text-foreground"
     >
-      <Suspense fallback={<div className="w-full h-full bg-background" />}>
-        <GenerativeArtScene />
-      </Suspense>
+      {/* The canvas + copy stick to the viewport while you scroll the section. */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <Suspense fallback={<div className="w-full h-full bg-background" />}>
+          <GenerativeArtScene />
+        </Suspense>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
 
-      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-20 md:pb-32 text-center">
-        <div className="max-w-3xl px-4 animate-fade-in-long">
-          <p className="text-sm font-mono tracking-widest text-sky-400/80 uppercase">
-            {title}
-          </p>
-          <h2 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
-            {subtitle}
-          </h2>
-          <p className="mt-6 max-w-xl mx-auto text-base leading-relaxed text-muted-foreground">
-            {description}
-          </p>
+        <div className="relative z-20 flex flex-col items-center justify-end h-full pb-20 md:pb-32 text-center">
+          <div className="max-w-3xl px-4 animate-fade-in-long">
+            <p className="text-sm font-mono tracking-widest text-sky-400/80 uppercase">
+              {title}
+            </p>
+            <h2 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
+              {subtitle}
+            </h2>
+            <p className="mt-6 max-w-xl mx-auto text-base leading-relaxed text-muted-foreground">
+              {description}
+            </p>
+          </div>
         </div>
       </div>
     </section>
