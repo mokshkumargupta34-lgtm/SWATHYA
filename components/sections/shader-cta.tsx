@@ -9,7 +9,7 @@ function StaticShaderCta({ onGetCare, onPlans }: { onGetCare: () => void; onPlan
   return (
     <section className="relative flex min-h-[80vh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#02101a] to-[#04303a] px-4 text-center text-white">
       <div className="mb-8 rounded-full border border-cyan-300/30 bg-cyan-500/10 px-6 py-3 text-sm text-cyan-100">
-        Trusted across 94 villages and 1,200+ health workers
+        Care in your language — built for the last mile
       </div>
       <h2 className="font-heading text-5xl font-bold md:text-7xl">
         <span className="block bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-300 bg-clip-text text-transparent">
@@ -58,7 +58,7 @@ export function ShaderCta() {
     <section className="relative">
       <Hero
         trustBadge={{
-          text: "Trusted across 94 villages and 1,200+ health workers",
+          text: "Care in your language — built for the last mile",
           icons: ["✦"],
         }}
         headline={{

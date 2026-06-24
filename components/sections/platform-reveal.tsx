@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
-import { Activity, CalendarClock, MapPin, ShieldCheck, Users } from "lucide-react";
+import { Activity, FileHeart, Pill, ShieldCheck, Stethoscope } from "lucide-react";
 
 function MiniDashboard() {
   return (
@@ -23,10 +23,10 @@ function MiniDashboard() {
 
       <div className="grid flex-1 grid-cols-2 gap-3 md:grid-cols-4">
         {[
-          { icon: Users, k: "12,480", v: "Patients reached", c: "text-cyan-300" },
-          { icon: CalendarClock, k: "318", v: "Consults today", c: "text-emerald-300" },
-          { icon: MapPin, k: "94", v: "Villages live", c: "text-teal-300" },
-          { icon: ShieldCheck, k: "100%", v: "Records secured", c: "text-sky-300" },
+          { icon: Stethoscope, k: "Tele-care", v: "In your language", c: "text-cyan-300" },
+          { icon: FileHeart, k: "Records", v: "Portable & secure", c: "text-emerald-300" },
+          { icon: Pill, k: "Medicine", v: "Nearby & affordable", c: "text-teal-300" },
+          { icon: ShieldCheck, k: "Private", v: "Encrypted by design", c: "text-sky-300" },
         ].map((s) => (
           <div
             key={s.v}

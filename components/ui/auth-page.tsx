@@ -63,15 +63,11 @@ export function AuthPage({
 				<div className="z-10 mt-auto">
 					<blockquote className="space-y-2">
 						<p className="text-xl">
-							&ldquo;SWASTHYA brought a doctor, my reports and my
-							mother&rsquo;s prescriptions into one place &mdash; in my own
-							language.&rdquo;
+							A doctor, your records and your medicine &mdash; in one place,
+							in your own language.
 						</p>
 						<footer className="font-mono text-sm font-semibold">
-							~ Anjali, ASHA worker
-							<span className="ml-2 font-sans font-normal text-muted-foreground">
-								(illustrative)
-							</span>
+							SWASTHYA &middot; &#2360;&#2381;&#2357;&#2366;&#2360;&#2381;&#2341;&#2381;&#2351;
 						</footer>
 					</blockquote>
 				</div>
@@ -264,13 +260,13 @@ function FloatingPaths({ position }: { position: number }) {
 			684 - i * 5 * position
 		} ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
 		color: `rgba(15,23,42,${0.1 + i * 0.03})`,
-		width: 0.5 + i * 0.03,
+		width: 1 + i * 0.05,
 	}));
 
 	return (
 		<div className="pointer-events-none absolute inset-0">
 			<svg
-				className="h-full w-full text-primary/70 dark:text-white"
+				className="h-full w-full text-primary dark:text-white"
 				viewBox="0 0 696 316"
 				fill="none"
 			>
@@ -281,11 +277,11 @@ function FloatingPaths({ position }: { position: number }) {
 						d={path.d}
 						stroke="currentColor"
 						strokeWidth={path.width}
-						strokeOpacity={0.1 + path.id * 0.03}
-						initial={{ pathLength: 0.3, opacity: 0.6 }}
+						strokeOpacity={0.3 + path.id * 0.02}
+						initial={{ pathLength: 0.3, opacity: 0.7 }}
 						animate={{
 							pathLength: 1,
-							opacity: [0.3, 0.6, 0.3],
+							opacity: [0.5, 0.9, 0.5],
 							pathOffset: [0, 1, 0],
 						}}
 						transition={{

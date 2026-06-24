@@ -4,10 +4,10 @@ import * as React from "react";
 import { AntiGravityCanvas } from "@/components/ui/particle-effect-for-hero";
 
 const STATS = [
-  { k: "94", v: "Villages connected" },
-  { k: "1,200+", v: "Community health workers" },
   { k: "8", v: "Languages supported" },
-  { k: "24/7", v: "Tele-care availability" },
+  { k: "Free", v: "Individual plan" },
+  { k: "Offline", v: "Low-bandwidth ready" },
+  { k: "Secure", v: "Encrypted records" },
 ];
 
 export function ReachSection() {
