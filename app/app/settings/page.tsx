@@ -254,7 +254,7 @@ export default function SettingsPage() {
                       </span>
                     ) : null}
                   </div>
-                  <p className="mt-1 font-heading text-xl font-bold text-foreground">{p.price}</p>
+                  <p className="mt-1 font-mono text-xl font-bold tracking-tight text-foreground">{p.price}</p>
                   <p className="text-xs text-muted-foreground">{p.desc}</p>
                   {active ? null : p.value === "JAN" ? (
                     <button

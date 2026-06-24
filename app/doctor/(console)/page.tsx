@@ -140,7 +140,7 @@ export default function DoctorConsolePage() {
                 <span className={cn("inline-flex h-10 w-10 items-center justify-center rounded-xl", s.c)}>
                   <s.icon className="h-5 w-5" />
                 </span>
-                <p className="mt-3 font-heading text-2xl font-bold text-foreground">{s.k}</p>
+                <p className="mt-3 font-mono text-2xl font-bold tracking-tight text-foreground">{s.k}</p>
                 <p className="text-xs text-muted-foreground">{s.v}</p>
               </div>
             ))}

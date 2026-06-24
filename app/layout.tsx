@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Lora, Raleway } from "next/font/google";
+import { JetBrains_Mono, Lora, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
+// Lora (serif) — brand identity, hero titles, section headings.
 const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -9,10 +10,19 @@ const lora = Lora({
   display: "swap",
 });
 
-const raleway = Raleway({
+// Plus Jakarta Sans (sans) — navigation, body content, form controls.
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-raleway",
+  variable: "--font-raleway", // kept var name so existing token wiring resolves
+  display: "swap",
+});
+
+// JetBrains Mono — numeric metrics, counters, technical status indicators.
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-jetbrains",
   display: "swap",
 });
 
@@ -59,7 +69,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${lora.variable} ${raleway.variable}`}
+      className={`${lora.variable} ${jakarta.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         {/* Apply saved theme before paint to avoid a flash of the wrong theme. */}

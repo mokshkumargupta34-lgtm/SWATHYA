@@ -149,7 +149,7 @@ All plans include access to our platform, lead generation tools, and dedicated s
                 {plan.name}
               </p>
               <div className="mt-6 flex items-center justify-center gap-x-2">
-                <span className="text-5xl font-bold tracking-tight text-foreground">
+                <span className="font-mono text-5xl font-bold tracking-tight text-foreground">
                   <NumberFlow
                     value={
                       isMonthly ? Number(plan.price) : Number(plan.yearlyPrice)

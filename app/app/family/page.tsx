@@ -64,8 +64,10 @@ export default function FamilyPage() {
         action={
           data ? (
             <span className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground">
-              {used} / {limit === 1000 ? "∞" : limit} used ·{" "}
-              <span className="text-primary">{PLAN_LABEL[data.plan]}</span>
+              <span className="font-mono tracking-tight">
+                {used} / {limit === 1000 ? "∞" : limit}
+              </span>{" "}
+              used · <span className="text-primary">{PLAN_LABEL[data.plan]}</span>
             </span>
           ) : null
         }

@@ -33,7 +33,7 @@ export function ReachSection() {
         <div className="mt-12 grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-12">
           {STATS.map((s) => (
             <div key={s.v}>
-              <p className="font-heading text-3xl font-bold text-white md:text-5xl">
+              <p className="font-mono text-3xl font-bold tracking-tight text-white md:text-5xl">
                 {s.k}
               </p>
               <p className="mt-1 text-xs uppercase tracking-wide text-white/45 md:text-sm">

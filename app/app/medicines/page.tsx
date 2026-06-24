@@ -134,10 +134,10 @@ function MedicineCard({ med }: { med: MedicineResult }) {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-foreground">{price(s.price)}</p>
+                <p className="font-mono text-sm font-semibold text-foreground">{price(s.price)}</p>
                 <p
                   className={cn(
-                    "text-[11px] font-medium",
+                    "font-mono text-[11px] font-medium",
                     s.quantity > 0 ? "text-emerald-600" : "text-rose-500",
                   )}
                 >
@@ -166,7 +166,7 @@ function MedicineCard({ med }: { med: MedicineResult }) {
                 ({med.alternative.genericName})
               </span>
             </p>
-            <p className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600">
+            <p className="inline-flex items-center gap-1 font-mono text-sm font-semibold text-emerald-600">
               <TrendingDown className="h-4 w-4" />
               {price(med.alternative.price)}
               <span className="text-xs font-normal text-muted-foreground">
