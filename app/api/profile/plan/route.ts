@@ -12,6 +12,12 @@ export async function PATCH(request: Request) {
   const parsed = await parseBody(request, patchPlanSchema);
   if ("response" in parsed) return parsed.response;
 
+  // Paid plans must go through verified payment (/api/payments/*). This route
+  // only handles the free plan — i.e. downgrading / cancelling to JAN.
+  if (parsed.data.plan !== "JAN") {
+    return jsonError(402, "Paid plans require checkout. Use the upgrade button.");
+  }
+
   const { data, error } = await ctx.supabase
     .from("profiles")
     .upsert({

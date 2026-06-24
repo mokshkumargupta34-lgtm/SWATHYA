@@ -76,6 +76,25 @@ export const patchPlanSchema = z.object({
   plan: z.enum(PLANS),
 });
 
+// ---- Payments (Razorpay) ---------------------------------------------------
+// Only the paid plans go through checkout. JAN is free (instant switch).
+export const PAID_PLANS = ["PARIVAR", "SAMUDAY"] as const;
+
+// Price per plan in paise (₹1 = 100 paise), kept in sync with the UI labels.
+export const PLAN_PRICE_PAISE: Record<(typeof PAID_PLANS)[number], number> = {
+  PARIVAR: 9900, // ₹99/mo
+  SAMUDAY: 49900, // ₹499/mo
+};
+
+export const createOrderSchema = z.object({ plan: z.enum(PAID_PLANS) });
+
+export const verifyPaymentSchema = z.object({
+  razorpay_order_id: z.string().min(1),
+  razorpay_payment_id: z.string().min(1),
+  razorpay_signature: z.string().min(1),
+  plan: z.enum(PAID_PLANS),
+});
+
 // ---- Doctor portal ---------------------------------------------------------
 // A doctor's specialty maps 1:1 to a consult type.
 export const SPECIALTIES = CONSULT_TYPES;

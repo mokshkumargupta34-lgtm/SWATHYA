@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, Globe, Loader2, LogOut, Settings, ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiGet, apiSend } from "@/lib/client-api";
+import { isRazorpayConfigured, RAZORPAY_CHECKOUT_SRC } from "@/lib/payments";
 import { useLiteMode, setLiteMode } from "@/hooks/use-lite-mode";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/client";
@@ -33,6 +34,26 @@ const PLANS = [
   { value: "PARIVAR", label: "Family+ (PARIVAR)", price: "₹99/mo", desc: "Up to 6 members, specialists" },
   { value: "SAMUDAY", label: "Community (SAMUDAY)", price: "₹499/mo", desc: "For NGOs, clinics & programs" },
 ];
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => { open: () => void };
+  }
+}
+
+/** Inject the Razorpay checkout script once; resolves true when ready. */
+function loadRazorpay(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") return resolve(false);
+    if (window.Razorpay) return resolve(true);
+    const s = document.createElement("script");
+    s.src = RAZORPAY_CHECKOUT_SRC;
+    s.async = true;
+    s.onload = () => resolve(true);
+    s.onerror = () => resolve(false);
+    document.body.appendChild(s);
+  });
+}
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -64,19 +85,75 @@ export default function SettingsPage() {
     }
   };
 
-  const changePlan = async (plan: string) => {
-    setPlanBusy(plan);
+  // Free plan = instant switch (downgrade / cancel).
+  const switchToFree = async () => {
+    setPlanBusy("JAN");
+    setError(null);
     try {
       const { profile: updated } = await apiSend<{ profile: Profile }>(
         "/api/profile/plan",
         "PATCH",
-        { plan },
+        { plan: "JAN" },
       );
       setProfile(updated);
-      router.refresh(); // refresh the sidebar plan badge
+      router.refresh();
     } catch (e) {
       setError((e as Error).message);
     } finally {
+      setPlanBusy(null);
+    }
+  };
+
+  // Paid plans = Razorpay checkout. The plan only switches once /verify
+  // confirms the payment signature server-side.
+  const startCheckout = async (plan: string) => {
+    setPlanBusy(plan);
+    setError(null);
+    try {
+      const loaded = await loadRazorpay();
+      if (!loaded || !window.Razorpay) {
+        throw new Error("Couldn't open the payment window — check your connection.");
+      }
+      const order = await apiSend<{
+        orderId: string;
+        amount: number;
+        currency: string;
+        keyId: string;
+      }>("/api/payments/order", "POST", { plan });
+
+      const rzp = new window.Razorpay({
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.orderId,
+        name: "SWASTHYA",
+        description: `${plan} plan`,
+        prefill: { email: profile?.email ?? "" },
+        theme: { color: "#0891B2" },
+        handler: async (resp: {
+          razorpay_order_id: string;
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) => {
+          try {
+            const { profile: updated } = await apiSend<{ profile: Profile }>(
+              "/api/payments/verify",
+              "POST",
+              { ...resp, plan },
+            );
+            setProfile(updated);
+            router.refresh();
+          } catch (e) {
+            setError((e as Error).message);
+          } finally {
+            setPlanBusy(null);
+          }
+        },
+        modal: { ondismiss: () => setPlanBusy(null) },
+      });
+      rzp.open();
+    } catch (e) {
+      setError((e as Error).message);
       setPlanBusy(null);
     }
   };
@@ -179,18 +256,39 @@ export default function SettingsPage() {
                   </div>
                   <p className="mt-1 font-heading text-xl font-bold text-foreground">{p.price}</p>
                   <p className="text-xs text-muted-foreground">{p.desc}</p>
-                  {!active ? (
+                  {active ? null : p.value === "JAN" ? (
                     <button
-                      onClick={() => changePlan(p.value)}
+                      onClick={switchToFree}
+                      disabled={planBusy !== null}
+                      className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted disabled:opacity-60"
+                    >
+                      {planBusy === "JAN" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                      Switch to Free
+                    </button>
+                  ) : isRazorpayConfigured ? (
+                    <button
+                      onClick={() => startCheckout(p.value)}
                       disabled={planBusy !== null}
                       className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02] disabled:opacity-60"
                     >
                       {planBusy === p.value ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : null}
-                      Switch to this plan
+                      Upgrade · {p.price}
                     </button>
-                  ) : null}
+                  ) : (
+                    <div className="mt-3">
+                      <button
+                        disabled
+                        className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold text-muted-foreground opacity-70"
+                      >
+                        Payment unavailable
+                      </button>
+                      <p className="mt-1.5 text-[11px] text-muted-foreground">
+                        Add Razorpay keys to enable upgrades.
+                      </p>
+                    </div>
+                  )}
                 </div>
               );
             })}
