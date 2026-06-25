@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Input } from './input';
 import { cn } from '@/lib/utils';
+import { VoxelCube } from './voxel-cube';
 
 export type AuthProvider = 'google' | 'github';
 
@@ -59,6 +60,11 @@ export function AuthPage({
 				<div className="z-10 flex items-center gap-2">
 					<HeartPulseIcon className="size-6 text-primary" />
 					<p className="text-xl font-semibold">SWASTHYA</p>
+				</div>
+
+				{/* Animated cube cluster (upper-right of the panel). */}
+				<div className="pointer-events-none absolute right-2 top-14 z-20 h-[46%] w-[64%]">
+					<VoxelCube />
 				</div>
 				<div className="z-10 mt-auto">
 					<blockquote className="space-y-2">
