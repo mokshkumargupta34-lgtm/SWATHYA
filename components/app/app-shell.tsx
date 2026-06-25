@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/client";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LanguageSelector } from "@/components/ui/language-selector";
 
 const NAV = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/app" },
@@ -138,6 +139,7 @@ export function AppShell({
                 Demo
               </span>
             )}
+            <LanguageSelector className="border border-border text-muted-foreground hover:text-foreground" />
             <ThemeToggle className="border border-border text-muted-foreground hover:text-foreground" />
             <button className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground">
               <Bell className="h-5 w-5" />

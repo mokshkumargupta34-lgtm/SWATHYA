@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Lora, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { GoogleTranslateInit } from "@/components/ui/language-selector";
 
 // Lora (serif) — brand identity, hero titles, section headings.
 const lora = Lora({
@@ -79,7 +80,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-background text-foreground antialiased">{children}</body>
+      <body className="bg-background text-foreground antialiased">
+        <GoogleTranslateInit />
+        {children}
+      </body>
     </html>
   );
 }

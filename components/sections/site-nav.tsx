@@ -5,6 +5,7 @@ import Link from "next/link";
 import { HeartPulse, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LanguageSelector } from "@/components/ui/language-selector";
 import { useLiteMode, setLiteMode } from "@/hooks/use-lite-mode";
 
 const LINKS = [
@@ -59,6 +60,7 @@ export function SiteNav() {
         </div>
 
         <div className="flex items-center gap-2">
+          <LanguageSelector className="text-white/80 hover:bg-white/10 hover:text-white" />
           <ThemeToggle className="text-white/90 hover:bg-white/10" />
           <Link
             href="/login"

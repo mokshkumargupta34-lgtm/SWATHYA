@@ -264,6 +264,27 @@
   pointer-events: none;
 }
 
+/* ------------------------------------------------------------------ */
+/* Google Website Translator — hide its default chrome; we drive it     */
+/* through our own LanguageSelector dropdown.                           */
+/* ------------------------------------------------------------------ */
+.goog-te-banner-frame,
+.goog-te-balloon-frame,
+#goog-gt-tt,
+.goog-te-gadget-icon,
+.skiptranslate > iframe {
+  display: none !important;
+  visibility: hidden !important;
+}
+#google_translate_element { display: none !important; }
+/* The widget tries to push the page down by ~40px — cancel that. */
+body { top: 0 !important; position: static !important; }
+/* Remove the yellow highlight Google paints over translated text. */
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
 /* Thin, themed scrollbar */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }

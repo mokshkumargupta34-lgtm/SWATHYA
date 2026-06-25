@@ -7,6 +7,7 @@ import { HeartPulse, LogOut, Stethoscope } from "lucide-react";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/client";
 import { SPECIALTY_LABELS } from "@/lib/validators";
+import { LanguageSelector } from "@/components/ui/language-selector";
 
 export type DoctorInfo = { name: string; email: string; specialty: string | null };
 
@@ -47,6 +48,7 @@ export function DoctorShell({
             <span className="hidden items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary sm:inline-flex">
               <Stethoscope className="h-3.5 w-3.5" /> {specialtyLabel}
             </span>
+            <LanguageSelector className="border border-border text-muted-foreground hover:text-foreground" />
             <span className="text-right text-sm">
               <span className="block font-medium leading-tight text-foreground">
                 {doctor.name || doctor.email}
