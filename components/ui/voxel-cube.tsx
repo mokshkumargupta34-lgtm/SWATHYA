@@ -7,10 +7,10 @@ import * as THREE from "three";
 /**
  * A cluster of glossy cubes that continuously morph (each cube breathes out
  * from / back to its grid slot) while the whole group slowly rotates — the
- * "deconstructing cube" look. Rendered with a transparent background so it can
- * float over any panel. Pauses when off-screen.
+ * "deconstructing cube" look, in the SWASTHYA cyan→emerald palette. Rendered
+ * with a transparent background so it floats over any panel; pauses off-screen.
  */
-export function VoxelCube({ color = "#e6122a" }: { color?: string }) {
+export function VoxelCube() {
   const mountRef = useRef(null);
 
   useEffect(() => {
@@ -27,12 +27,12 @@ export function VoxelCube({ color = "#e6122a" }: { color?: string }) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     mount.appendChild(renderer.domElement);
 
-    // Lighting — a strong key + cool rim to get the bright edges / dark sides.
-    scene.add(new THREE.AmbientLight(0xffffff, 0.55));
-    const key = new THREE.DirectionalLight(0xffffff, 2.2);
+    // Lighting — strong key + cool rim for bright edges / soft shadowed sides.
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const key = new THREE.DirectionalLight(0xffffff, 2.1);
     key.position.set(4, 6, 5);
     scene.add(key);
-    const rim = new THREE.DirectionalLight(0xffd0d0, 0.8);
+    const rim = new THREE.DirectionalLight(0xc9fff4, 0.8);
     rim.position.set(-5, -2, -3);
     scene.add(rim);
 
@@ -45,16 +45,23 @@ export function VoxelCube({ color = "#e6122a" }: { color?: string }) {
     const size = 0.5;
     const half = (N - 1) / 2;
     const geo = new THREE.BoxGeometry(size, size, size);
-    const mat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(color),
-      metalness: 0.45,
-      roughness: 0.22,
-    });
+
+    // Brand gradient: cyan at the bottom, emerald at the top.
+    const cyan = new THREE.Color("#22d3ee");
+    const emerald = new THREE.Color("#059467");
 
     const cubes = [];
+    const materials = [];
     for (let x = 0; x < N; x++) {
       for (let y = 0; y < N; y++) {
         for (let z = 0; z < N; z++) {
+          const mat = new THREE.MeshStandardMaterial({
+            metalness: 0.45,
+            roughness: 0.22,
+          });
+          mat.color.copy(cyan).lerp(emerald, y / (N - 1));
+          materials.push(mat);
+
           const mesh = new THREE.Mesh(geo, mat);
           const base = new THREE.Vector3(
             (x - half) * spacing,
@@ -95,7 +102,6 @@ export function VoxelCube({ color = "#e6122a" }: { color?: string }) {
 
       for (const m of cubes) {
         const u = m.userData;
-        // each cube breathes out along its direction with its own phase
         const d = Math.sin(t * 0.0013 + u.phase) * 0.5 + 0.5; // 0..1
         tmp.copy(u.dir).multiplyScalar(d * 0.95);
         m.position.copy(u.base).add(tmp);
@@ -123,10 +129,10 @@ export function VoxelCube({ color = "#e6122a" }: { color?: string }) {
         mount.removeChild(renderer.domElement);
       }
       geo.dispose();
-      mat.dispose();
+      materials.forEach((m) => m.dispose());
       renderer.dispose();
     };
-  }, [color]);
+  }, []);
 
   return <div ref={mountRef} className="h-full w-full" />;
 }

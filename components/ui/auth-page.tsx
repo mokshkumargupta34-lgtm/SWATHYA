@@ -63,7 +63,7 @@ export function AuthPage({
 				</div>
 
 				{/* Animated cube cluster (upper-right of the panel). */}
-				<div className="pointer-events-none absolute right-2 top-14 z-20 h-[46%] w-[64%]">
+				<div className="pointer-events-none absolute right-2 top-2 z-20 h-[46%] w-[64%]">
 					<VoxelCube />
 				</div>
 				<div className="z-10 mt-auto">
