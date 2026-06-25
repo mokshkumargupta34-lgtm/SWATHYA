@@ -51,7 +51,12 @@ const fade = {
 export function FocusAreas() {
   return (
     <section id="focus" className="relative bg-background py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-6">
+      {/* Fade the dark scroll hero above into this light section (behind content). */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-32 bg-gradient-to-b from-[#02101a] to-transparent md:h-48"
+      />
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
