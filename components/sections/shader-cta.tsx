@@ -8,34 +8,40 @@ import { useStaticVisuals } from "@/hooks/use-lite-mode";
 function StaticShaderCta({ onGetCare, onPlans }: { onGetCare: () => void; onPlans: () => void }) {
   return (
     <section className="relative flex min-h-[80vh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#02101a] to-[#04303a] px-4 text-center text-white">
-      <div className="mb-8 rounded-full border border-cyan-300/30 bg-cyan-500/10 px-6 py-3 text-sm text-cyan-100">
-        Care in your language — built for the last mile
-      </div>
-      <h2 className="font-heading text-5xl font-bold md:text-7xl">
-        <span className="block bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-300 bg-clip-text text-transparent">
-          Healthcare,
-        </span>
-        <span className="block bg-gradient-to-r from-emerald-300 via-cyan-400 to-sky-400 bg-clip-text text-transparent">
-          Closer to Home
-        </span>
-      </h2>
-      <p className="mt-6 max-w-3xl text-lg text-cyan-50/85 md:text-xl">
-        Reach a doctor, carry your records and find affordable medicine — in your
-        own language. Care that travels the last mile, so no one is left behind.
-      </p>
-      <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-        <button
-          onClick={onGetCare}
-          className="rounded-full bg-gradient-to-r from-cyan-400 to-emerald-500 px-8 py-4 text-lg font-semibold text-[#03141a] transition-transform hover:scale-105"
-        >
-          Get Care Now
-        </button>
-        <button
-          onClick={onPlans}
-          className="rounded-full border border-cyan-300/30 bg-cyan-500/10 px-8 py-4 text-lg font-semibold text-cyan-100 transition-colors hover:bg-cyan-500/20"
-        >
-          Compare Plans
-        </button>
+      {/* Fade the light sections above/below into this dark CTA (behind content). */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-0 h-32 bg-gradient-to-b from-background to-transparent md:h-48" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-32 bg-gradient-to-t from-background to-transparent md:h-48" />
+
+      <div className="relative z-10 flex flex-col items-center">
+        <div className="mb-8 rounded-full border border-cyan-300/30 bg-cyan-500/10 px-6 py-3 text-sm text-cyan-100">
+          Care in your language — built for the last mile
+        </div>
+        <h2 className="font-heading text-5xl font-bold md:text-7xl">
+          <span className="block bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-300 bg-clip-text text-transparent">
+            Healthcare,
+          </span>
+          <span className="block bg-gradient-to-r from-emerald-300 via-cyan-400 to-sky-400 bg-clip-text text-transparent">
+            Closer to Home
+          </span>
+        </h2>
+        <p className="mt-6 max-w-3xl text-lg text-cyan-50/85 md:text-xl">
+          Reach a doctor, carry your records and find affordable medicine — in your
+          own language. Care that travels the last mile, so no one is left behind.
+        </p>
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+          <button
+            onClick={onGetCare}
+            className="rounded-full bg-gradient-to-r from-cyan-400 to-emerald-500 px-8 py-4 text-lg font-semibold text-[#03141a] transition-transform hover:scale-105"
+          >
+            Get Care Now
+          </button>
+          <button
+            onClick={onPlans}
+            className="rounded-full border border-cyan-300/30 bg-cyan-500/10 px-8 py-4 text-lg font-semibold text-cyan-100 transition-colors hover:bg-cyan-500/20"
+          >
+            Compare Plans
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -56,6 +62,10 @@ export function ShaderCta() {
 
   return (
     <section className="relative">
+      {/* Fade the light sections above/below into the shader hero (z-[5] sits
+          above the WebGL canvas but below the centered copy at z-10). */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-[5] h-32 bg-gradient-to-b from-background to-transparent md:h-48" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-32 bg-gradient-to-t from-background to-transparent md:h-48" />
       <Hero
         trustBadge={{
           text: "Care in your language — built for the last mile",

@@ -15,6 +15,17 @@ export function ReachSection() {
     <section className="relative h-[90vh] w-full overflow-hidden bg-black">
       <AntiGravityCanvas />
 
+      {/* Fade the neighbouring light sections into the dark mesh, top & bottom.
+          z-[5] sits above the particle canvas (z-0) but below the copy (z-10). */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-[5] h-40 bg-gradient-to-b from-background to-transparent md:h-56"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-40 bg-gradient-to-t from-background to-transparent md:h-56"
+      />
+
       <div className="pointer-events-none relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
         <span className="mb-4 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.25em] text-white/60 backdrop-blur-sm">
           Move your cursor — the mesh responds
