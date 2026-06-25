@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Loader2, Stethoscope } from "lucide-react";
+import { ArrowLeft, Github, Loader2, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/client";
@@ -27,6 +27,30 @@ export function DoctorAuth({ mode }: { mode: "login" | "signup" }) {
   const [specialty, setSpecialty] = React.useState<string>(SPECIALTIES[0]);
   const [pending, setPending] = React.useState(false);
   const [message, setMessage] = React.useState<Msg>(null);
+
+  // OAuth: pass the doctor intent (+ chosen specialty on signup) through the
+  // callback so /auth/callback can set the profile role to "doctor".
+  const handleOAuth = async (provider: "google" | "github") => {
+    if (!supabase) {
+      setMessage({ type: "error", text: "Backend not configured." });
+      return;
+    }
+    setPending(true);
+    setMessage(null);
+    const query =
+      mode === "signup"
+        ? `?next=/doctor&doctor=1&specialty=${specialty}`
+        : `?next=/doctor`;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${window.location.origin}/auth/callback${query}` },
+    });
+    if (error) {
+      setPending(false);
+      setMessage({ type: "error", text: error.message });
+    }
+    // On success the browser is redirected to the provider.
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +127,45 @@ export function DoctorAuth({ mode }: { mode: "login" | "signup" }) {
             </div>
           </div>
 
+          {mode === "signup" ? (
+            <div className="mb-4">
+              <Field label="Your specialty">
+                <Select value={specialty} onChange={(e) => setSpecialty(e.target.value)}>
+                  {SPECIALTIES.map((s) => (
+                    <option key={s} value={s}>
+                      {SPECIALTY_LABELS[s]}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+            </div>
+          ) : null}
+
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={() => handleOAuth("google")}
+              disabled={pending}
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-border bg-background px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted disabled:opacity-60"
+            >
+              <GoogleIcon className="h-4 w-4" /> Continue with Google
+            </button>
+            <button
+              type="button"
+              onClick={() => handleOAuth("github")}
+              disabled={pending}
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-border bg-background px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted disabled:opacity-60"
+            >
+              <Github className="h-4 w-4" /> Continue with GitHub
+            </button>
+          </div>
+
+          <div className="my-4 flex items-center gap-3">
+            <span className="h-px flex-1 bg-border" />
+            <span className="text-xs text-muted-foreground">or</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
           <form onSubmit={submit} className="space-y-4">
             {mode === "signup" ? (
               <Field label="Full name">
@@ -135,18 +198,6 @@ export function DoctorAuth({ mode }: { mode: "login" | "signup" }) {
                 required
               />
             </Field>
-            {mode === "signup" ? (
-              <Field label="Specialty">
-                <Select value={specialty} onChange={(e) => setSpecialty(e.target.value)}>
-                  {SPECIALTIES.map((s) => (
-                    <option key={s} value={s}>
-                      {SPECIALTY_LABELS[s]}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-            ) : null}
-
             <button
               type="submit"
               disabled={pending}
@@ -197,5 +248,13 @@ export function DoctorAuth({ mode }: { mode: "login" | "signup" }) {
         </p>
       </div>
     </main>
+  );
+}
+
+function GoogleIcon(props: React.ComponentProps<"svg">) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12.479,14.265v-3.279h11.049c0.108,0.571,0.164,1.247,0.164,1.979c0,2.46-0.672,5.502-2.84,7.669C18.744,22.829,16.051,24,12.483,24C5.869,24,0.308,18.613,0.308,12S5.869,0,12.483,0c3.659,0,6.265,1.436,8.223,3.307L18.392,5.62c-1.404-1.317-3.307-2.341-5.913-2.341C7.65,3.279,3.873,7.171,3.873,12s3.777,8.721,8.606,8.721c3.132,0,4.916-1.258,6.059-2.401c0.927-0.927,1.537-2.251,1.777-4.059L12.479,14.265z" />
+    </svg>
   );
 }
