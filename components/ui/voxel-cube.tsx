@@ -20,7 +20,8 @@ export function VoxelCube() {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
-    camera.position.set(0, 0, 6.4);
+    // Pulled back so the full morphing cluster stays inside the frame (no clip).
+    camera.position.set(0, 0, 8.2);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(w, h);
@@ -103,7 +104,7 @@ export function VoxelCube() {
       for (const m of cubes) {
         const u = m.userData;
         const d = Math.sin(t * 0.0013 + u.phase) * 0.5 + 0.5; // 0..1
-        tmp.copy(u.dir).multiplyScalar(d * 0.95);
+        tmp.copy(u.dir).multiplyScalar(d * 0.82);
         m.position.copy(u.base).add(tmp);
         m.rotation.x += u.spin;
         m.rotation.y += u.spin * 0.6;
