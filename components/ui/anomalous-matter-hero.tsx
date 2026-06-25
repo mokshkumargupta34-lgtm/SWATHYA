@@ -237,7 +237,7 @@ export function AnomalousMatterHero({
 
         <div className="relative z-20 flex h-full flex-col items-center justify-center text-center">
           <div className="max-w-3xl px-4 animate-fade-in-long">
-            <p className="text-sm font-mono tracking-widest text-sky-400/80 uppercase">
+            <p className="text-sm font-mono font-semibold tracking-widest text-primary uppercase">
               {title}
             </p>
             <h2 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
