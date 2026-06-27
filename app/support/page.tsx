@@ -16,15 +16,10 @@ export default function SupportPage() {
     >
       <InfoSection title="Contact us">
         <p>
-          Email{" "}
-          <a
-            href="mailto:care@swasthya.health"
-            className="font-medium text-primary underline underline-offset-2"
-          >
-            care@swasthya.health
-          </a>{" "}
-          and we&rsquo;ll get back within one working day. Community (SAMUDAY) plans
-          include a dedicated success manager.
+          Have a question the FAQs below don&rsquo;t cover? Reach out from inside
+          your Care Console once you&rsquo;re signed in, and we&rsquo;ll get back
+          within one working day. Community (SAMUDAY) plans include a dedicated
+          success manager.
         </p>
       </InfoSection>
       <InfoSection title="Common questions">
