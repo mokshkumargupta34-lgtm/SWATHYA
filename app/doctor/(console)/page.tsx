@@ -90,6 +90,8 @@ export default function DoctorConsolePage() {
   const [consults, setConsults] = React.useState<DoctorConsult[] | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [call, setCall] = React.useState<DoctorConsult | null>(null);
+  // After a call ends, nudge the doctor to complete that consult (notes + Rx).
+  const [completeFor, setCompleteFor] = React.useState<string | null>(null);
 
   const load = React.useCallback(() => {
     apiGet<{ consults: DoctorConsult[] }>("/api/doctor/consults")
@@ -155,14 +157,14 @@ export default function DoctorConsolePage() {
                 <EmptyState icon={Inbox} title="Queue is empty" hint="New bookings in your specialty will appear here." />
               </SectionCard>
             ) : (
-              open.map((c) => <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} onCall={() => setCall(c)} />)
+              open.map((c) => <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} onCall={() => setCall(c)} autoComplete={completeFor === c.id} />)
             )}
           </Section>
 
           {mine.length > 0 ? (
             <Section title="Accepted by you" hint="Complete, reschedule or cancel">
               {mine.map((c) => (
-                <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} onCall={() => setCall(c)} />
+                <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} onCall={() => setCall(c)} autoComplete={completeFor === c.id} />
               ))}
             </Section>
           ) : null}
@@ -170,7 +172,7 @@ export default function DoctorConsolePage() {
           {done.length > 0 ? (
             <Section title="History" hint="Completed & cancelled">
               {done.map((c) => (
-                <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} onCall={() => setCall(c)} />
+                <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} onCall={() => setCall(c)} autoComplete={completeFor === c.id} />
               ))}
             </Section>
           ) : null}
@@ -182,7 +184,11 @@ export default function DoctorConsolePage() {
           room={call.id}
           displayName={call.doctor_name || "Doctor"}
           subject={`${TYPE_META[call.type].label} consultation`}
-          onClose={() => setCall(null)}
+          waitingFor="patient"
+          onClose={() => {
+            setCompleteFor(call.id);
+            setCall(null);
+          }}
         />
       ) : null}
     </PageContainer>
@@ -214,11 +220,13 @@ function ConsultCard({
   onChange,
   onError,
   onCall,
+  autoComplete,
 }: {
   consult: DoctorConsult;
   onChange: (c: DoctorConsult) => void;
   onError: (m: string) => void;
   onCall?: () => void;
+  autoComplete?: boolean;
 }) {
   const meta = TYPE_META[consult.type];
   const [busy, setBusy] = React.useState<string | null>(null);
@@ -226,6 +234,11 @@ function ConsultCard({
   const [doctorNotes, setDoctorNotes] = React.useState("");
   const [prescription, setPrescription] = React.useState("");
   const [showHealth, setShowHealth] = React.useState(false);
+
+  // When a call just ended for this consult, open the completion form.
+  React.useEffect(() => {
+    if (autoComplete && consult.status === "SCHEDULED") setCompleting(true);
+  }, [autoComplete, consult.status]);
 
   const act = async (body: Record<string, unknown>, key: string) => {
     setBusy(key);
@@ -364,8 +377,13 @@ function ConsultCard({
         </div>
       ) : null}
 
-      {completing ? (
+      {completing && consult.status === "SCHEDULED" ? (
         <div className="mt-4 space-y-3 rounded-2xl border border-border bg-background/50 p-4">
+          {autoComplete ? (
+            <p className="text-sm font-medium text-emerald-600">
+              Call ended — add your notes &amp; prescription to complete this consult.
+            </p>
+          ) : null}
           <Field label="Consultation notes">
             <TextArea
               value={doctorNotes}

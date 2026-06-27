@@ -46,17 +46,21 @@ export function VideoCallOverlay({
   room,
   displayName,
   subject,
+  waitingFor,
   onClose,
 }: {
   room: string;
   displayName: string;
   subject?: string;
+  waitingFor?: string;
   onClose: () => void;
 }) {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const apiRef = React.useRef<JitsiApi | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [joined, setJoined] = React.useState(false);
+  const [peers, setPeers] = React.useState(0);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -87,7 +91,12 @@ export function VideoCallOverlay({
         },
       });
       apiRef.current = api;
-      api.addEventListener("videoConferenceJoined", () => setLoading(false));
+      api.addEventListener("videoConferenceJoined", () => {
+        setLoading(false);
+        setJoined(true);
+      });
+      api.addEventListener("participantJoined", () => setPeers((n) => n + 1));
+      api.addEventListener("participantLeft", () => setPeers((n) => Math.max(0, n - 1)));
       api.addEventListener("readyToClose", () => onClose());
       // Hide the spinner once the iframe has had time to render the pre-join UI.
       setTimeout(() => !cancelled && setLoading(false), 3500);
@@ -105,13 +114,19 @@ export function VideoCallOverlay({
   return (
     <div className="fixed inset-0 z-[60] flex flex-col bg-black">
       <div className="flex items-center justify-between gap-3 bg-[#04141d] px-4 py-2.5 text-white">
-        <div className="flex items-center gap-2 text-sm font-medium">
-          <Video className="h-4 w-4 text-emerald-400" />
-          {subject ?? "Live consultation"}
+        <div className="flex min-w-0 items-center gap-2 text-sm font-medium">
+          <Video className="h-4 w-4 shrink-0 text-emerald-400" />
+          <span className="truncate">{subject ?? "Live consultation"}</span>
         </div>
+        {joined && peers === 0 && waitingFor ? (
+          <span className="hidden items-center gap-2 rounded-full bg-amber-400/15 px-3 py-1 text-xs font-medium text-amber-200 sm:flex">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-300" />
+            Waiting for the {waitingFor} to join…
+          </span>
+        ) : null}
         <button
           onClick={onClose}
-          className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-rose-500/80"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-rose-500/80"
         >
           <X className="h-4 w-4" /> Leave call
         </button>

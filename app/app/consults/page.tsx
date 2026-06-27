@@ -177,6 +177,7 @@ export default function ConsultsPage() {
           room={call.id}
           displayName={call.patient_name || "Patient"}
           subject={`${typeMeta(call.type).label} consultation`}
+          waitingFor="doctor"
           onClose={() => setCall(null)}
         />
       ) : null}
