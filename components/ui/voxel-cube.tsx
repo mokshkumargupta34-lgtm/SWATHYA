@@ -7,7 +7,7 @@ import * as THREE from "three";
 /**
  * A cluster of glossy cubes that continuously morph (each cube breathes out
  * from / back to its grid slot) while the whole group slowly rotates — the
- * "deconstructing cube" look, in the SWASTHYA cyan→emerald palette. Rendered
+ * "deconstructing cube" look, in the SwasthyaSetu cyan→emerald palette. Rendered
  * with a transparent background so it floats over any panel; pauses off-screen.
  */
 export function VoxelCube() {

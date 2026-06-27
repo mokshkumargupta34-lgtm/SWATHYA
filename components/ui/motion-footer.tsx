@@ -299,7 +299,7 @@ export function CinematicFooter() {
             ref={giantTextRef}
             className="footer-giant-bg-text absolute -bottom-[5vh] left-1/2 -translate-x-1/2 whitespace-nowrap z-0 pointer-events-none select-none"
           >
-            SWASTHYA
+            SwasthyaSetu
           </div>
 
           {/* 1. Diagonal Sleek Marquee (Top of footer) */}
@@ -361,7 +361,7 @@ export function CinematicFooter() {
 
             {/* Copyright */}
             <div className="text-muted-foreground text-[10px] md:text-xs font-semibold tracking-widest uppercase order-2 md:order-1">
-              © {new Date().getFullYear()} SWASTHYA. All rights reserved.
+              © {new Date().getFullYear()} SwasthyaSetu. All rights reserved.
             </div>
 
             {/* "Made with Love" Badge */}

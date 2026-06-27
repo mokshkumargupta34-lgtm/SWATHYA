@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, HeartPulse, Stethoscope, UserRound } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Get started · SWASTHYA",
-  description: "Join SWASTHYA as a patient or a doctor.",
+  title: "Get started · SwasthyaSetu",
+  description: "Join SwasthyaSetu as a patient or a doctor.",
 };
 
 export default function JoinPage() {
@@ -15,7 +15,7 @@ export default function JoinPage() {
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 text-white">
             <HeartPulse className="h-4 w-4" />
           </span>
-          <span className="text-lg">SWASTHYA</span>
+          <span className="text-lg">SwasthyaSetu</span>
         </Link>
         <Link
           href="/"
@@ -31,7 +31,7 @@ export default function JoinPage() {
             Get started
           </span>
           <h1 className="mt-5 font-heading text-3xl font-bold text-foreground sm:text-4xl">
-            How will you use SWASTHYA?
+            How will you use SwasthyaSetu?
           </h1>
           <p className="mt-3 text-muted-foreground">
             Choose the experience that fits you — you can always switch accounts later.

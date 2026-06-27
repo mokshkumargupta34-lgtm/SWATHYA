@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { InfoPage, InfoSection } from "@/components/marketing/info-page";
 
 export const metadata: Metadata = {
-  title: "Privacy · SWASTHYA",
-  description: "How SWASTHYA protects your health data.",
+  title: "Privacy · SwasthyaSetu",
+  description: "How SwasthyaSetu protects your health data.",
 };
 
 export default function PrivacyPage() {
@@ -11,7 +11,7 @@ export default function PrivacyPage() {
     <InfoPage
       eyebrow="Privacy"
       title="Your health, your data"
-      intro="SWASTHYA is built so your records travel with you — and stay yours. Here's how we handle your information."
+      intro="SwasthyaSetu is built so your records travel with you — and stay yours. Here's how we handle your information."
     >
       <InfoSection title="What we collect">
         <p>

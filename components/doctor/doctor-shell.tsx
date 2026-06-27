@@ -40,7 +40,7 @@ export function DoctorShell({
               <HeartPulse className="h-4 w-4" />
             </span>
             <span className="text-base">
-              SWASTHYA <span className="text-muted-foreground">· Doctor</span>
+              SwasthyaSetu <span className="text-muted-foreground">· Doctor</span>
             </span>
           </Link>
 

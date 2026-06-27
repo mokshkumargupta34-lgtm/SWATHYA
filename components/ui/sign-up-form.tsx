@@ -56,7 +56,7 @@ export function SignUpForm({
               </span>
             </Link>
             <h1 className="font-heading mb-1 mt-4 text-xl font-semibold">
-              Create your SWASTHYA account
+              Create your SwasthyaSetu account
             </h1>
             <p className="text-muted-foreground text-sm">
               Welcome! A few details and your care travels with you.

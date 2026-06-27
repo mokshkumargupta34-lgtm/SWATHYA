@@ -29,16 +29,16 @@ const jetbrainsMono = JetBrains_Mono({
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://swathya.vercel.app";
 const SITE_DESCRIPTION =
-  "SWASTHYA (स्वास्थ्य) brings healthcare closer in distance, cost and language — rural & remote care, maternal & child health, youth mental health, affordable medicine and portable health records.";
+  "SwasthyaSetu (स्वास्थ्य) brings healthcare closer in distance, cost and language — rural & remote care, maternal & child health, youth mental health, affordable medicine and portable health records.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "SWASTHYA — Health, Wellness & Care Access",
-    template: "%s · SWASTHYA",
+    default: "SwasthyaSetu — Health, Wellness & Care Access",
+    template: "%s · SwasthyaSetu",
   },
   description: SITE_DESCRIPTION,
-  applicationName: "SWASTHYA",
+  applicationName: "SwasthyaSetu",
   keywords: [
     "rural healthcare",
     "telemedicine India",
@@ -50,14 +50,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: SITE_URL,
-    siteName: "SWASTHYA",
-    title: "SWASTHYA — Health, Wellness & Care Access",
+    siteName: "SwasthyaSetu",
+    title: "SwasthyaSetu — Health, Wellness & Care Access",
     description: SITE_DESCRIPTION,
     locale: "en_IN",
   },
   twitter: {
     card: "summary_large_image",
-    title: "SWASTHYA — Health, Wellness & Care Access",
+    title: "SwasthyaSetu — Health, Wellness & Care Access",
     description: SITE_DESCRIPTION,
   },
   alternates: { canonical: "/" },

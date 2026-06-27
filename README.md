@@ -1,4 +1,4 @@
-# SWASTHYA (स्वास्थ्य)
+# SwasthyaSetu (स्वास्थ्य सेतु)
 
 **Health, Wellness & Care Access** — a high-end scrollytelling healthcare platform that brings care closer in **distance, cost and language**.
 

@@ -69,7 +69,7 @@ export function AppShell({
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 text-white">
             <HeartPulse className="h-4 w-4" />
           </span>
-          <span className="text-lg">SWASTHYA</span>
+          <span className="text-lg">SwasthyaSetu</span>
         </Link>
 
         <nav className="mt-8 flex flex-1 flex-col gap-1">
@@ -123,7 +123,7 @@ export function AppShell({
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 text-white">
               <HeartPulse className="h-4 w-4" />
             </span>
-            <span className="text-base">SWASTHYA</span>
+            <span className="text-base">SwasthyaSetu</span>
           </Link>
           <div className="hidden lg:block">
             <p className="text-sm text-muted-foreground">

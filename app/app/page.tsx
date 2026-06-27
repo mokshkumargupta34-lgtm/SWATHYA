@@ -110,7 +110,7 @@ export default function DashboardPage() {
         <SectionCard>
           <p className="text-sm text-muted-foreground">
             {!isSupabaseConfigured
-              ? "You’re exploring SWASTHYA in demo mode. Sign in to see your live consultations, records and reminders."
+              ? "You’re exploring SwasthyaSetu in demo mode. Sign in to see your live consultations, records and reminders."
               : "We couldn’t load your console data just now. Please refresh or try again shortly."}
           </p>
         </SectionCard>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
       </SectionCard>
 
       <p className="pb-8 pt-2 text-center text-xs text-muted-foreground">
-        SWASTHYA · स्वास्थ्य — bringing healthcare closer in distance, cost and language.
+        SwasthyaSetu · स्वास्थ्य सेतु — bringing healthcare closer in distance, cost and language.
       </p>
     </PageContainer>
   );

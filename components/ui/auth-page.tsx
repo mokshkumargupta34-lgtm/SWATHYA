@@ -59,7 +59,7 @@ export function AuthPage({
 				<div className="from-background absolute inset-0 z-10 bg-gradient-to-t to-transparent" />
 				<div className="z-10 flex items-center gap-2">
 					<HeartPulseIcon className="size-6 text-primary" />
-					<p className="text-xl font-semibold">SWASTHYA</p>
+					<p className="text-xl font-semibold">SwasthyaSetu</p>
 				</div>
 
 				{/* Animated cube cluster (upper-right of the panel). */}
@@ -73,7 +73,7 @@ export function AuthPage({
 							in your own language.
 						</p>
 						<footer className="font-mono text-sm font-semibold">
-							SWASTHYA &middot; &#2360;&#2381;&#2357;&#2366;&#2360;&#2381;&#2341;&#2381;&#2351;
+							SwasthyaSetu &middot; स्वास्थ्य सेतु
 						</footer>
 					</blockquote>
 				</div>
@@ -100,7 +100,7 @@ export function AuthPage({
 				<div className="mx-auto space-y-4 sm:max-w-sm w-full">
 					<div className="flex items-center gap-2 lg:hidden">
 						<HeartPulseIcon className="size-6 text-primary" />
-						<p className="text-xl font-semibold">SWASTHYA</p>
+						<p className="text-xl font-semibold">SwasthyaSetu</p>
 					</div>
 					<div className="flex flex-col space-y-1">
 						<h1 className="font-heading text-2xl font-bold tracking-wide">
@@ -213,7 +213,7 @@ export function AuthPage({
 					)}
 
 					<p className="text-center text-sm text-muted-foreground">
-						New to SWASTHYA?{' '}
+						New to SwasthyaSetu?{' '}
 						<a
 							href="/signup"
 							className="text-primary underline underline-offset-4"

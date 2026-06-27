@@ -48,7 +48,7 @@ export function SiteNav() {
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 text-white">
             <HeartPulse className="h-4 w-4" />
           </span>
-          <span className="text-lg">SWASTHYA</span>
+          <span className="text-lg">SwasthyaSetu</span>
         </Link>
 
         <div className="hidden items-center gap-8 text-sm font-medium text-white/85 md:flex">

@@ -497,7 +497,7 @@ const Hero: React.FC<HeroProps> = ({
 const defaultShaderSource = `#version 300 es
 /*********
 * made by Matthias Hurrle (@atzedent)
-* Recoloured to the SWASTHYA cyan/teal/green palette.
+* Recoloured to the SwasthyaSetu cyan/teal/green palette.
 */
 precision highp float;
 out vec4 O;

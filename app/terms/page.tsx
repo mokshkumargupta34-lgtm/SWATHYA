@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { InfoPage, InfoSection } from "@/components/marketing/info-page";
 
 export const metadata: Metadata = {
-  title: "Terms · SWASTHYA",
-  description: "The terms of using SWASTHYA.",
+  title: "Terms · SwasthyaSetu",
+  description: "The terms of using SwasthyaSetu.",
 };
 
 export default function TermsPage() {
@@ -11,18 +11,18 @@ export default function TermsPage() {
     <InfoPage
       eyebrow="Terms"
       title="Terms of service"
-      intro="By using SWASTHYA you agree to the following. We've kept them plain."
+      intro="By using SwasthyaSetu you agree to the following. We've kept them plain."
     >
-      <InfoSection title="Using SWASTHYA">
+      <InfoSection title="Using SwasthyaSetu">
         <p>
-          SWASTHYA helps you reach tele-consults, store health records, find
+          SwasthyaSetu helps you reach tele-consults, store health records, find
           medicines and manage care for your family. You agree to use it lawfully
           and to keep your login credentials secure.
         </p>
       </InfoSection>
       <InfoSection title="Not a medical emergency service">
         <p>
-          SWASTHYA connects you with healthcare information and providers, but it
+          SwasthyaSetu connects you with healthcare information and providers, but it
           is not a substitute for emergency care. In an emergency, contact your
           local emergency services immediately.
         </p>
