@@ -3,7 +3,7 @@ import { ArrowLeft, HeartPulse } from "lucide-react";
 
 /**
  * Shared shell for the marketing/legal pages (Privacy, Terms, Support). Styled
- * with the SwasthyaSetu tokens so it matches the rest of the site in light & dark.
+ * with the Sanjeevani tokens so it matches the rest of the site in light & dark.
  */
 export function InfoPage({
   eyebrow,
@@ -24,7 +24,7 @@ export function InfoPage({
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 text-white">
               <HeartPulse className="h-4 w-4" />
             </span>
-            <span className="text-lg">SwasthyaSetu</span>
+            <span className="text-lg">Sanjeevani</span>
           </Link>
           <Link
             href="/"
@@ -49,7 +49,7 @@ export function InfoPage({
         <div className="mt-10 space-y-8 leading-relaxed">{children}</div>
 
         <p className="mt-14 border-t border-border pt-6 text-sm text-muted-foreground">
-          SwasthyaSetu · स्वास्थ्य सेतु — Health, wellness &amp; care access. Last updated 21 June 2026.
+          Sanjeevani · संजीवनी — Health, wellness &amp; care access. Last updated 21 June 2026.
         </p>
       </article>
     </main>

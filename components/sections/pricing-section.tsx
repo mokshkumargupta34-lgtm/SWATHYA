@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Pricing } from "@/components/ui/pricing";
 
-export const SwasthyaSetu_PLANS = [
+export const Sanjeevani_PLANS = [
   {
     name: "JAN (Individual)",
     price: "0",
@@ -71,7 +71,7 @@ Every plan keeps care affordable — most features are free, forever.`,
 } = {}) {
   return (
     <section className="relative bg-background py-12">
-      <Pricing plans={SwasthyaSetu_PLANS} title={title} description={description} />
+      <Pricing plans={Sanjeevani_PLANS} title={title} description={description} />
     </section>
   );
 }

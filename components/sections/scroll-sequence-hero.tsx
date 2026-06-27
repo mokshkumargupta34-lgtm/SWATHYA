@@ -8,7 +8,7 @@
  * Rather than loading a pre-rendered image sequence (hundreds of JPGs), each
  * frame is drawn procedurally from `progress` — the same scrubbing technique,
  * but resolution-independent and asset-free. Five scroll phases narrate the
- * five SwasthyaSetu focus areas.
+ * five Sanjeevani focus areas.
  */
 
 import * as React from "react";
@@ -17,7 +17,7 @@ import { MorphingText } from "@/components/ui/liquid-text";
 import { FrameButton } from "@/components/ui/frame-button";
 
 const MORPH_TEXTS = [
-  "SwasthyaSetu",
+  "Sanjeevani",
   "स्वास्थ्य",
   "Health",
   "आरोग्य",
@@ -295,7 +295,7 @@ export function ScrollSequenceHero() {
 
           {/* The single page <h1>; the morphing text below is decorative. */}
           <h1 className="sr-only">
-            SwasthyaSetu — Health, Wellness and Care Access
+            Sanjeevani — Health, Wellness and Care Access
           </h1>
           <MorphingText
             texts={MORPH_TEXTS}

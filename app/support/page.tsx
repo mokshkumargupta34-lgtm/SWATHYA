@@ -3,8 +3,8 @@ import Link from "next/link";
 import { InfoPage, InfoSection } from "@/components/marketing/info-page";
 
 export const metadata: Metadata = {
-  title: "Support · SwasthyaSetu",
-  description: "Get help with SwasthyaSetu.",
+  title: "Support · Sanjeevani",
+  description: "Get help with Sanjeevani.",
 };
 
 export default function SupportPage() {

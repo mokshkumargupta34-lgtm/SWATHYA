@@ -572,7 +572,7 @@ export const Component = () => {
           <span></span>
           <span></span>
         </div>
-        <div className="vertical-text">SwasthyaSetu</div>
+        <div className="vertical-text">Sanjeevani</div>
       </div>
 
       {/* Main content */}

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 
-export const alt = "SwasthyaSetu — Health, Wellness & Care Access";
+export const alt = "Sanjeevani — Health, Wellness & Care Access";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -48,7 +48,7 @@ export default function OpengraphImage() {
           >
             ♥
           </div>
-          SwasthyaSetu
+          Sanjeevani
         </div>
         <div style={{ marginTop: 40, fontSize: 64, fontWeight: 800, lineHeight: 1.1 }}>
           Healthcare, closer to home.

@@ -139,7 +139,7 @@ function LoginInner() {
             className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-10 bg-[#02101a]/95 backdrop-blur-xl"
           >
             <p className="font-heading text-2xl font-semibold text-white">
-              SwasthyaSetu
+              Sanjeevani
             </p>
             <ProgressiveFluxLoader
               value={progress}

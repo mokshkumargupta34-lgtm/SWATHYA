@@ -71,7 +71,7 @@ export function FocusAreas() {
             Care that meets people where they are
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            SwasthyaSetu closes the gaps that keep healthcare out of reach — across
+            Sanjeevani closes the gaps that keep healthcare out of reach — across
             distance, cost and language.
           </p>
         </motion.div>

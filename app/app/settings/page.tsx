@@ -126,7 +126,7 @@ export default function SettingsPage() {
         amount: order.amount,
         currency: order.currency,
         order_id: order.orderId,
-        name: "SwasthyaSetu",
+        name: "Sanjeevani",
         description: `${plan} plan`,
         prefill: { email: profile?.email ?? "" },
         theme: { color: "#0891B2" },
