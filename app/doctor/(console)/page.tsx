@@ -12,10 +12,12 @@ import {
   Loader2,
   Stethoscope,
   UserRound,
+  Video,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiGet, apiSend } from "@/lib/client-api";
+import { VideoCallOverlay } from "@/components/ui/video-call";
 import {
   EmptyState,
   ErrorNote,
@@ -87,6 +89,7 @@ function ageFrom(dob: string | null) {
 export default function DoctorConsolePage() {
   const [consults, setConsults] = React.useState<DoctorConsult[] | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [call, setCall] = React.useState<DoctorConsult | null>(null);
 
   const load = React.useCallback(() => {
     apiGet<{ consults: DoctorConsult[] }>("/api/doctor/consults")
@@ -152,14 +155,14 @@ export default function DoctorConsolePage() {
                 <EmptyState icon={Inbox} title="Queue is empty" hint="New bookings in your specialty will appear here." />
               </SectionCard>
             ) : (
-              open.map((c) => <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} />)
+              open.map((c) => <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} onCall={() => setCall(c)} />)
             )}
           </Section>
 
           {mine.length > 0 ? (
             <Section title="Accepted by you" hint="Complete, reschedule or cancel">
               {mine.map((c) => (
-                <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} />
+                <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} onCall={() => setCall(c)} />
               ))}
             </Section>
           ) : null}
@@ -167,12 +170,21 @@ export default function DoctorConsolePage() {
           {done.length > 0 ? (
             <Section title="History" hint="Completed & cancelled">
               {done.map((c) => (
-                <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} />
+                <ConsultCard key={c.id} consult={c} onChange={apply} onError={setError} onCall={() => setCall(c)} />
               ))}
             </Section>
           ) : null}
         </>
       )}
+
+      {call ? (
+        <VideoCallOverlay
+          room={call.id}
+          displayName={call.doctor_name || "Doctor"}
+          subject={`${TYPE_META[call.type].label} consultation`}
+          onClose={() => setCall(null)}
+        />
+      ) : null}
     </PageContainer>
   );
 }
@@ -201,10 +213,12 @@ function ConsultCard({
   consult,
   onChange,
   onError,
+  onCall,
 }: {
   consult: DoctorConsult;
   onChange: (c: DoctorConsult) => void;
   onError: (m: string) => void;
+  onCall?: () => void;
 }) {
   const meta = TYPE_META[consult.type];
   const [busy, setBusy] = React.useState<string | null>(null);
@@ -315,6 +329,14 @@ function ConsultCard({
             </button>
           ) : (
             <>
+              {onCall ? (
+                <button
+                  onClick={onCall}
+                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-emerald-500 px-4 py-2 text-sm font-semibold text-[#03141a] transition-transform hover:scale-[1.02]"
+                >
+                  <Video className="h-4 w-4" /> Start video call
+                </button>
+              ) : null}
               <button
                 onClick={() => setCompleting((v) => !v)}
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02]"

@@ -9,10 +9,12 @@ import {
   Loader2,
   Plus,
   Stethoscope,
+  Video,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiGet, apiSend, type Consult } from "@/lib/client-api";
+import { VideoCallOverlay } from "@/components/ui/video-call";
 import {
   EmptyState,
   ErrorNote,
@@ -53,6 +55,7 @@ export default function ConsultsPage() {
   const [consults, setConsults] = React.useState<Consult[] | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
+  const [call, setCall] = React.useState<Consult | null>(null);
 
   const load = React.useCallback(() => {
     apiGet<{ consults: Consult[] }>("/api/consults")
@@ -143,7 +146,12 @@ export default function ConsultsPage() {
             ) : (
               <div className="space-y-3">
                 {upcoming.map((c) => (
-                  <ConsultRow key={c.id} consult={c} onCancel={() => cancel(c.id)} />
+                  <ConsultRow
+                    key={c.id}
+                    consult={c}
+                    onCancel={() => cancel(c.id)}
+                    onJoinCall={() => setCall(c)}
+                  />
                 ))}
               </div>
             )}
@@ -163,6 +171,15 @@ export default function ConsultsPage() {
           ) : null}
         </>
       )}
+
+      {call ? (
+        <VideoCallOverlay
+          room={call.id}
+          displayName={call.patient_name || "Patient"}
+          subject={`${typeMeta(call.type).label} consultation`}
+          onClose={() => setCall(null)}
+        />
+      ) : null}
     </PageContainer>
   );
 }
@@ -170,9 +187,11 @@ export default function ConsultsPage() {
 function ConsultRow({
   consult,
   onCancel,
+  onJoinCall,
 }: {
   consult: Consult;
   onCancel?: () => void;
+  onJoinCall?: () => void;
 }) {
   const meta = typeMeta(consult.type);
   const statusStyle =
@@ -219,6 +238,14 @@ function ConsultRow({
       <span className={cn("rounded-full px-3 py-1 text-xs font-medium", statusStyle)}>
         {consult.status.charAt(0) + consult.status.slice(1).toLowerCase()}
       </span>
+      {onJoinCall && consult.status === "SCHEDULED" ? (
+        <button
+          onClick={onJoinCall}
+          className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-emerald-500 px-3 py-1.5 text-xs font-semibold text-[#03141a] transition-transform hover:scale-105"
+        >
+          <Video className="h-3.5 w-3.5" /> Join video call
+        </button>
+      ) : null}
       {onCancel ? (
         <button
           onClick={onCancel}
