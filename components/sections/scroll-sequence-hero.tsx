@@ -331,7 +331,7 @@ export function ScrollSequenceHero() {
               </FrameButton>
             </Link>
             <Link href="/pricing" className="no-underline">
-              <FrameButton as="button" variant="outline">
+              <FrameButton as="button" variant="outline" className="text-white dark:text-white">
                 See Plans
               </FrameButton>
             </Link>
