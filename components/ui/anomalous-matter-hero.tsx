@@ -30,7 +30,7 @@ export function GenerativeArtScene() {
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        uExplode: { value: 1 }, // 0 = sphere intact, 1 = fully disintegrated
+        uExplode: { value: 0 }, // kept at 0 — sphere stays fully formed
         pointLightPos: { value: new THREE.Vector3(0, 0, 5) },
         color: { value: new THREE.Color("#38bdf8") },
       },
@@ -136,24 +136,6 @@ export function GenerativeArtScene() {
     lightRef.current = pointLight;
     scene.add(pointLight);
 
-    // Scroll progress through the parent section drives the disintegration:
-    // scattered at the section's entry/exit, reformed when it's centered.
-    let targetExplode = 1;
-    const section = currentMount.closest("section");
-    const updateScroll = () => {
-      if (!section) return;
-      const rect = section.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const total = Math.max(rect.height - vh, 1);
-      const scrolled = Math.min(Math.max(-rect.top, 0), total);
-      const progress = scrolled / total; // 0..1 across the sticky scroll
-      // 0 (intact) in the middle, easing up to 1 (scattered) at both ends.
-      let e = Math.abs(progress - 0.5) * 2.0;
-      targetExplode = Math.min(e * e, 1);
-    };
-    updateScroll();
-    window.addEventListener("scroll", updateScroll, { passive: true });
-
     // Pause GPU work entirely when the hero is off-screen or the tab is hidden.
     let visible = true;
     const io = new IntersectionObserver(
@@ -167,9 +149,7 @@ export function GenerativeArtScene() {
       frameId = requestAnimationFrame(animate);
       if (!visible || document.hidden) return;
       material.uniforms.time.value = t * 0.0003;
-      // Smoothly chase the scroll-driven target so it melts apart / reassembles.
-      const cur = material.uniforms.uExplode.value;
-      material.uniforms.uExplode.value = cur + (targetExplode - cur) * 0.06;
+      // Gentle ambient rotation only — the sphere stays fully formed.
       mesh.rotation.y += 0.0005;
       mesh.rotation.x += 0.0002;
       renderer.render(scene, camera);
@@ -180,7 +160,6 @@ export function GenerativeArtScene() {
       camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
-      updateScroll();
     };
 
     const handleMouseMove = (e) => {
@@ -203,7 +182,6 @@ export function GenerativeArtScene() {
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("scroll", updateScroll);
       if (currentMount && renderer.domElement.parentNode === currentMount) {
         currentMount.removeChild(renderer.domElement);
       }
@@ -222,31 +200,27 @@ export function AnomalousMatterHero({
   description = "A new form of digital existence has been observed. It responds to stimuli, changes form, and exudes an unknown energy. Further study is required.",
 }) {
   return (
-    // Taller than the viewport so there's scroll room for the disintegration.
     <section
       aria-label="Youth mental health"
-      className="relative w-full h-[230vh] bg-background text-foreground"
+      className="relative w-full h-screen overflow-hidden bg-background text-foreground"
     >
-      {/* The canvas + copy stick to the viewport while you scroll the section. */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <Suspense fallback={<div className="w-full h-full bg-background" />}>
-          <GenerativeArtScene />
-        </Suspense>
+      <Suspense fallback={<div className="w-full h-full bg-background" />}>
+        <GenerativeArtScene />
+      </Suspense>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
 
-        <div className="relative z-20 flex h-full flex-col items-center justify-center text-center">
-          <div className="max-w-3xl px-4 animate-fade-in-long">
-            <p className="text-sm font-mono font-semibold tracking-widest text-primary uppercase">
-              {title}
-            </p>
-            <h2 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
-              {subtitle}
-            </h2>
-            <p className="mt-6 max-w-xl mx-auto text-base leading-relaxed text-muted-foreground">
-              {description}
-            </p>
-          </div>
+      <div className="relative z-20 flex h-full flex-col items-center justify-center text-center">
+        <div className="max-w-3xl px-4 animate-fade-in-long">
+          <p className="text-sm font-mono font-semibold tracking-widest text-primary uppercase">
+            {title}
+          </p>
+          <h2 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
+            {subtitle}
+          </h2>
+          <p className="mt-6 max-w-xl mx-auto text-base leading-relaxed text-muted-foreground">
+            {description}
+          </p>
         </div>
       </div>
     </section>
