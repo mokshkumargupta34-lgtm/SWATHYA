@@ -39,6 +39,7 @@ export async function POST(request: Request) {
       title: body.title,
       notes: body.notes || null,
       file_url: body.fileUrl || null,
+      file_mime: body.fileMime || null,
       recorded_at: body.recordedAt ?? new Date().toISOString(),
     })
     .select()

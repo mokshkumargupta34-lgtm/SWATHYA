@@ -438,3 +438,70 @@ create policy "Doctors view patient health for their consults"
         and (p.specialty = c.type or c.doctor_id = auth.uid())
     )
   );
+
+-- ============================================================================
+-- Records v2: photo / PDF attachments + AI analysis.
+-- This whole file is idempotent — re-run it after pulling these changes so the
+-- new columns, bucket and policies exist.
+-- ============================================================================
+
+-- File + AI metadata on health records.
+alter table public.health_records add column if not exists file_mime      text;
+alter table public.health_records add column if not exists ai_status      text not null default 'NONE'; -- NONE | DONE | ERROR
+alter table public.health_records add column if not exists ai_insight     text;
+alter table public.health_records add column if not exists ai_model       text;
+alter table public.health_records add column if not exists ai_analyzed_at timestamptz;
+
+-- A bucket for record attachments. Files live under records/<uid>/... ; each
+-- user may only write to their own folder. Objects are world-readable *by URL*
+-- (like avatars) so a treating doctor can open them — but paths use random
+-- UUID-ish names, so URLs aren't enumerable.
+insert into storage.buckets (id, name, public)
+values ('records', 'records', true)
+on conflict (id) do nothing;
+
+drop policy if exists "Record files are readable" on storage.objects;
+create policy "Record files are readable"
+  on storage.objects for select
+  using (bucket_id = 'records');
+
+drop policy if exists "Users upload their own record files" on storage.objects;
+create policy "Users upload their own record files"
+  on storage.objects for insert
+  with check (
+    bucket_id = 'records'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+drop policy if exists "Users update their own record files" on storage.objects;
+create policy "Users update their own record files"
+  on storage.objects for update
+  using (
+    bucket_id = 'records'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+drop policy if exists "Users delete their own record files" on storage.objects;
+create policy "Users delete their own record files"
+  on storage.objects for delete
+  using (
+    bucket_id = 'records'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- A doctor may read the health records of a patient who has a consult in the
+-- doctor's specialty (mirrors the health_profiles doctor policy). The owner
+-- policy from earlier is OR-combined, so patients still only see their own.
+drop policy if exists "Doctors view patient records for their consults" on public.health_records;
+create policy "Doctors view patient records for their consults"
+  on public.health_records for select
+  using (
+    exists (
+      select 1
+      from public.consults c
+      join public.profiles p on p.id = auth.uid()
+      where c.user_id = health_records.user_id
+        and p.role = 'doctor'
+        and (p.specialty = c.type or c.doctor_id = auth.uid())
+    )
+  );

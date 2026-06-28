@@ -44,6 +44,7 @@ export const createRecordSchema = z.object({
   title: z.string().trim().min(1, "Title is required").max(140),
   notes: z.string().trim().max(4000).optional().nullable(),
   fileUrl: z.string().url().max(2000).optional().nullable().or(z.literal("")),
+  fileMime: z.string().trim().max(120).optional().nullable().or(z.literal("")),
   recordedAt: z.string().datetime().optional(),
 });
 export type CreateRecordInput = z.infer<typeof createRecordSchema>;

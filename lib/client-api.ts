@@ -41,6 +41,11 @@ export type HealthRecord = {
   title: string;
   notes: string | null;
   file_url: string | null;
+  file_mime: string | null;
+  ai_status: "NONE" | "DONE" | "ERROR" | null;
+  ai_insight: string | null;
+  ai_model: string | null;
+  ai_analyzed_at: string | null;
   recorded_at: string;
   created_at: string;
 };

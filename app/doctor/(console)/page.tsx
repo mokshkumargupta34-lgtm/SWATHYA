@@ -7,9 +7,11 @@ import {
   CalendarClock,
   Check,
   ClipboardList,
+  FileText,
   HeartPulse,
   Inbox,
   Loader2,
+  Sparkles,
   Stethoscope,
   UserRound,
   Video,
@@ -234,6 +236,7 @@ function ConsultCard({
   const [doctorNotes, setDoctorNotes] = React.useState("");
   const [prescription, setPrescription] = React.useState("");
   const [showHealth, setShowHealth] = React.useState(false);
+  const [showRecords, setShowRecords] = React.useState(false);
 
   // When a call just ended for this consult, open the completion form.
   React.useEffect(() => {
@@ -316,15 +319,25 @@ function ConsultCard({
             </div>
           ) : null}
 
-          {/* Health profile expander */}
-          <button
-            onClick={() => setShowHealth((v) => !v)}
-            className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-          >
-            <UserRound className="h-3.5 w-3.5" />
-            {showHealth ? "Hide patient health" : "View patient health"}
-          </button>
+          {/* Patient context expanders */}
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+            <button
+              onClick={() => setShowHealth((v) => !v)}
+              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+            >
+              <UserRound className="h-3.5 w-3.5" />
+              {showHealth ? "Hide patient health" : "View patient health"}
+            </button>
+            <button
+              onClick={() => setShowRecords((v) => !v)}
+              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              {showRecords ? "Hide records" : "View records & AI insights"}
+            </button>
+          </div>
           {showHealth ? <HealthPanel patientId={consult.patient_id} onError={onError} /> : null}
+          {showRecords ? <RecordsPanel patientId={consult.patient_id} onError={onError} /> : null}
         </div>
       </div>
 
@@ -480,6 +493,91 @@ function HealthPanel({
           <span className="font-medium text-foreground">Medications:</span> {health.current_medications}
         </p>
       ) : null}
+    </div>
+  );
+}
+
+type PatientRecord = {
+  id: string;
+  type: string;
+  title: string;
+  notes: string | null;
+  file_url: string | null;
+  file_mime: string | null;
+  ai_status: "NONE" | "DONE" | "ERROR" | null;
+  ai_insight: string | null;
+  ai_model: string | null;
+  ai_analyzed_at: string | null;
+  recorded_at: string;
+};
+
+function RecordsPanel({
+  patientId,
+  onError,
+}: {
+  patientId: string;
+  onError: (m: string) => void;
+}) {
+  const [records, setRecords] = React.useState<PatientRecord[] | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    apiGet<{ records: PatientRecord[] }>(`/api/doctor/patient-records/${patientId}`)
+      .then((r) => setRecords(r.records))
+      .catch((e) => onError(e.message))
+      .finally(() => setLoading(false));
+  }, [patientId, onError]);
+
+  if (loading)
+    return (
+      <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading records…
+      </p>
+    );
+  if (!records || records.length === 0)
+    return (
+      <p className="mt-2 text-xs text-muted-foreground">
+        This patient hasn&rsquo;t added any health records.
+      </p>
+    );
+
+  return (
+    <div className="mt-2 space-y-2">
+      {records.map((r) => (
+        <div key={r.id} className="rounded-xl border border-border bg-background/60 p-3 text-xs">
+          <div className="flex items-start justify-between gap-2">
+            <span className="font-medium text-foreground">{r.title}</span>
+            <span className="shrink-0 text-muted-foreground">
+              {new Date(r.recorded_at).toLocaleDateString(undefined, {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
+            </span>
+          </div>
+          {r.notes ? <p className="mt-1 text-muted-foreground">{r.notes}</p> : null}
+          {r.file_url ? (
+            <a
+              href={r.file_url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1 inline-block font-medium text-primary underline underline-offset-2"
+            >
+              View attachment
+            </a>
+          ) : null}
+          {r.ai_status === "DONE" && r.ai_insight ? (
+            <div className="mt-2 rounded-lg border border-primary/20 bg-primary/5 p-2">
+              <p className="flex items-center gap-1 font-semibold text-primary">
+                <Sparkles className="h-3 w-3" /> AI insight
+              </p>
+              <p className="mt-1 whitespace-pre-wrap leading-relaxed text-muted-foreground">
+                {r.ai_insight}
+              </p>
+            </div>
+          ) : null}
+        </div>
+      ))}
     </div>
   );
 }

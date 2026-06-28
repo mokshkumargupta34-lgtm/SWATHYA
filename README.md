@@ -19,7 +19,7 @@ Built with **Next.js 14 (App Router)**, **TypeScript**, **Tailwind CSS v4**, **F
 - **Pricing**, **animated cinematic footer**, and a marketing landing page.
 - **Care Console** (`/app`) — a real, database-backed authenticated product:
   - **Dashboard** — live stats, a 7-day consultation chart and the upcoming care queue.
-  - **Records** — create / list / delete portable health records.
+  - **Records** — create / list / delete portable health records, **attach a photo or PDF** (lab report, prescription, scan), and get an **AI explanation** in plain language. Attachments and insights are visible to the treating doctor.
   - **Consults** — book, list and cancel tele-consultations (general, specialist, mental health, maternal).
   - **Medicines** — search the catalog for nearby-pharmacy stock with a cheaper **generic alternative** suggestion.
   - **Family** — add / remove members, enforcing plan limits (Individual = self, Family+ = 6, Community = unlimited).
@@ -47,6 +47,12 @@ Open <https://swathya.vercel.app/>.
 5. Restart the dev server, then sign up at `/signup`. (Without keys, login uses a front-end mock; the `/app` API returns `503` until the schema is run.)
 
 > The Care Console lives under `/app`. `/dashboard` permanently redirects there.
+
+### Record attachments + AI analysis
+
+- Re-running [`supabase/schema.sql`](supabase/schema.sql) (step 4 above) is required after pulling this — it adds the `records` storage bucket, the AI columns on `health_records`, and the doctor read policy. It's idempotent, so just paste & run it again.
+- File uploads land in a public-by-URL `records` bucket under `records/<uid>/…` (unguessable paths). Doctors open patient attachments via the same URL once they have a consult with that patient.
+- For the **AI explanation**, set `GEMINI_API_KEY` in `.env.local` (see [`.env.example`](.env.example)) and restart. It uses **Google Gemini's free tier** (`gemini-2.0-flash`) — get a free key, no credit card, at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) — to read the uploaded photo/PDF and write a cautious, plain-language summary, never a diagnosis. Without the key, uploads still work; the "Analyze with AI" button just reports that it isn't configured.
 
 ## Scripts
 

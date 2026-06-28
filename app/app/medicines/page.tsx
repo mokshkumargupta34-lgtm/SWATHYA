@@ -1,9 +1,25 @@
 "use client";
 
 import * as React from "react";
-import { MapPin, Pill, Search, Sparkles, TrendingDown } from "lucide-react";
+import {
+  Loader2,
+  LocateFixed,
+  MapPin,
+  Navigation,
+  Pill,
+  Search,
+  Sparkles,
+  TrendingDown,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiGet, type MedicineResult } from "@/lib/client-api";
+import {
+  bearingFromString,
+  destinationPoint,
+  formatKm,
+  haversineKm,
+  type LatLng,
+} from "@/lib/geo";
 import {
   ErrorNote,
   PageContainer,
@@ -11,6 +27,16 @@ import {
   SectionCard,
   Spinner,
 } from "@/components/app/primitives";
+
+const GEO_KEY = "sanjeevani:geo";
+
+type GeoStatus =
+  | "idle"
+  | "prompting"
+  | "granted"
+  | "denied"
+  | "error"
+  | "unsupported";
 
 function price(n: number) {
   return n === 0 ? "Free" : `₹${n}`;
@@ -21,6 +47,49 @@ export default function MedicinesPage() {
   const [results, setResults] = React.useState<MedicineResult[] | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+
+  const [coords, setCoords] = React.useState<LatLng | null>(null);
+  const [geoStatus, setGeoStatus] = React.useState<GeoStatus>("idle");
+
+  // Ask the browser for the user's location. All distance math stays client-side.
+  const requestLocation = React.useCallback(() => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setGeoStatus("unsupported");
+      return;
+    }
+    setGeoStatus("prompting");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const c = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setCoords(c);
+        setGeoStatus("granted");
+        try {
+          localStorage.setItem(GEO_KEY, JSON.stringify(c));
+        } catch {
+          /* storage unavailable — ignore */
+        }
+      },
+      (err) => {
+        setGeoStatus(err.code === err.PERMISSION_DENIED ? "denied" : "error");
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
+    );
+  }, []);
+
+  // On first load, reuse a remembered location, otherwise prompt for access.
+  React.useEffect(() => {
+    try {
+      const raw = localStorage.getItem(GEO_KEY);
+      if (raw) {
+        setCoords(JSON.parse(raw) as LatLng);
+        setGeoStatus("granted");
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+    requestLocation();
+  }, [requestLocation]);
 
   // Debounced live search against the catalog.
   React.useEffect(() => {
@@ -51,8 +120,10 @@ export default function MedicinesPage() {
       <PageHeading
         icon={Pill}
         title="Medicine availability"
-        subtitle="Live stock at nearby pharmacies — with cheaper generic alternatives."
+        subtitle="Live stock at pharmacies near you — distances, directions and cheaper generics."
       />
+
+      <LocationBanner status={geoStatus} onEnable={requestLocation} />
 
       <SectionCard>
         <div className="relative">
@@ -83,7 +154,7 @@ export default function MedicinesPage() {
       ) : (
         <div className="space-y-4">
           {results?.map((m) => (
-            <MedicineCard key={m.id} med={m} />
+            <MedicineCard key={m.id} med={m} coords={coords} />
           ))}
         </div>
       )}
@@ -91,7 +162,83 @@ export default function MedicinesPage() {
   );
 }
 
-function MedicineCard({ med }: { med: MedicineResult }) {
+function LocationBanner({
+  status,
+  onEnable,
+}: {
+  status: GeoStatus;
+  onEnable: () => void;
+}) {
+  if (status === "granted") {
+    return (
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 px-4 py-3 text-sm">
+        <span className="flex items-center gap-2 font-medium text-emerald-700">
+          <LocateFixed className="h-4 w-4" /> Pharmacies sorted by distance from your location.
+        </span>
+        <button
+          onClick={onEnable}
+          className="text-xs font-medium text-emerald-700 underline underline-offset-2"
+        >
+          Update location
+        </button>
+      </div>
+    );
+  }
+
+  if (status === "prompting") {
+    return (
+      <div className="flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+        <Loader2 className="h-4 w-4 animate-spin" /> Requesting your location…
+      </div>
+    );
+  }
+
+  const message =
+    status === "denied"
+      ? "Location is blocked. Allow it in your browser to see real distances and directions."
+      : status === "unsupported"
+        ? "Your browser doesn’t support location — showing sample distances."
+        : status === "error"
+          ? "Couldn’t get your location. Showing sample distances — try again."
+          : "Enable location to see how far each pharmacy is and get directions.";
+
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm">
+      <span className="flex items-center gap-2 text-amber-700">
+        <MapPin className="h-4 w-4 shrink-0" /> {message}
+      </span>
+      {status !== "unsupported" ? (
+        <button
+          onClick={onEnable}
+          className="inline-flex items-center gap-1.5 rounded-full bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-amber-700"
+        >
+          <LocateFixed className="h-3.5 w-3.5" /> Enable location
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function MedicineCard({
+  med,
+  coords,
+}: {
+  med: MedicineResult;
+  coords: LatLng | null;
+}) {
+  // Place each sample pharmacy at its catalogued distance from the user (along a
+  // stable bearing), then compute the real distance + a directions link.
+  const stores = React.useMemo(() => {
+    const rows = med.stock.map((s) => {
+      if (!coords) return { s, dist: s.distanceKm, mapsUrl: null as string | null };
+      const point = destinationPoint(coords, s.distanceKm, bearingFromString(s.pharmacy));
+      const dist = haversineKm(coords, point);
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${coords.lat},${coords.lng}&destination=${point.lat},${point.lng}`;
+      return { s, dist, mapsUrl };
+    });
+    return rows.sort((a, b) => a.dist - b.dist);
+  }, [med.stock, coords]);
+
   return (
     <SectionCard>
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -117,9 +264,9 @@ function MedicineCard({ med }: { med: MedicineResult }) {
         </span>
       </div>
 
-      {med.stock.length > 0 ? (
+      {stores.length > 0 ? (
         <ul className="mt-4 space-y-2">
-          {med.stock.map((s, i) => (
+          {stores.map(({ s, dist, mapsUrl }, i) => (
             <li
               key={i}
               className="flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2.5"
@@ -128,8 +275,22 @@ function MedicineCard({ med }: { med: MedicineResult }) {
                 <MapPin className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">{s.pharmacy}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {s.village} · {s.distanceKm} km
+                  <p className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
+                    <span>{s.village}</span>
+                    <span aria-hidden>·</span>
+                    <span className={cn(coords && "font-medium text-foreground")}>
+                      {coords ? `${formatKm(dist)} away` : `~${s.distanceKm} km`}
+                    </span>
+                    {mapsUrl ? (
+                      <a
+                        href={mapsUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+                      >
+                        <Navigation className="h-3 w-3" /> Directions
+                      </a>
+                    ) : null}
                   </p>
                 </div>
               </div>
@@ -162,9 +323,7 @@ function MedicineCard({ med }: { med: MedicineResult }) {
           <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm text-foreground">
               <span className="font-medium">{med.alternative.name}</span>{" "}
-              <span className="text-muted-foreground">
-                ({med.alternative.genericName})
-              </span>
+              <span className="text-muted-foreground">({med.alternative.genericName})</span>
             </p>
             <p className="inline-flex items-center gap-1 font-mono text-sm font-semibold text-emerald-600">
               <TrendingDown className="h-4 w-4" />
