@@ -17,8 +17,9 @@ export function GenerativeArtScene() {
       0.1,
       1000
     );
-    // Pulled back a touch so the larger sphere fills the frame without clipping.
-    camera.position.z = 3.2;
+    // Pulled back so the whole sphere sits inside the frame with margin all
+    // round (no clipping at the top/bottom edges of the section).
+    camera.position.z = 4.4;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
@@ -208,9 +209,7 @@ export function AnomalousMatterHero({
         <GenerativeArtScene />
       </Suspense>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
-
-      <div className="relative z-20 flex h-full flex-col items-center justify-center text-center">
+      <div className="relative z-20 flex h-full flex-col items-center justify-center text-center [text-shadow:0_1px_8px_var(--background)]">
         <div className="max-w-3xl px-4 animate-fade-in-long">
           <p className="text-sm font-mono font-semibold tracking-widest text-primary uppercase">
             {title}
