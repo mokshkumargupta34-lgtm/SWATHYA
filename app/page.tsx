@@ -4,6 +4,7 @@ import { FocusAreas } from "@/components/sections/focus-areas";
 import { AnomalousSection } from "@/components/sections/anomalous-section";
 import { PlatformReveal } from "@/components/sections/platform-reveal";
 import { ReachSection } from "@/components/sections/reach-section";
+import { Roadmap } from "@/components/sections/roadmap";
 import { PricingSection } from "@/components/sections/pricing-section";
 import { ShaderCta } from "@/components/sections/shader-cta";
 import { CinematicFooter } from "@/components/ui/motion-footer";
@@ -31,6 +32,9 @@ export default function Home() {
 
       {/* Interactive reach / network */}
       <ReachSection />
+
+      {/* What's live now vs on the roadmap */}
+      <Roadmap />
 
       {/* Pricing */}
       <PricingSection />

@@ -4,8 +4,11 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  Activity,
   Bell,
+  Brain,
   FileHeart,
+  FileText,
   HeartPulse,
   LayoutDashboard,
   LogOut,
@@ -24,6 +27,9 @@ const NAV = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/app" },
   { icon: FileHeart, label: "Records", href: "/app/records" },
   { icon: Stethoscope, label: "Consults", href: "/app/consults" },
+  { icon: Activity, label: "Symptom AI", href: "/app/symptom-checker" },
+  { icon: Brain, label: "Wellness", href: "/app/wellness" },
+  { icon: FileText, label: "AI History", href: "/app/health-history" },
   { icon: Pill, label: "Medicines", href: "/app/medicines" },
   { icon: Users, label: "Family", href: "/app/family" },
   { icon: Settings, label: "Settings", href: "/app/settings" },

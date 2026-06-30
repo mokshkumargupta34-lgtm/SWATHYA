@@ -158,3 +158,37 @@ export const LANGUAGE_OPTIONS: { value: string; label: string }[] = [
 export function languageLabel(code: string | null | undefined) {
   return LANGUAGE_OPTIONS.find((l) => l.value === code)?.label ?? "English";
 }
+
+/** Renders Gemini's structured text (headings + "- " bullets) nicely. */
+export function AIResponse({ text }: { text: string }) {
+  const lines = text.split("\n");
+  return (
+    <div className="space-y-1.5 text-sm leading-relaxed">
+      {lines.map((raw, i) => {
+        const t = raw.trim();
+        if (!t) return null;
+        if (t.startsWith("- ") || t.startsWith("* ")) {
+          return (
+            <p key={i} className="flex gap-2 text-muted-foreground">
+              <span className="mt-px text-primary">•</span>
+              <span>{t.slice(2)}</span>
+            </p>
+          );
+        }
+        // A short line that isn't a sentence reads as a heading.
+        if (t.length < 72 && !/[.!?]$/.test(t) && !t.startsWith("Note:")) {
+          return (
+            <p key={i} className="pt-2 font-semibold text-foreground">
+              {t}
+            </p>
+          );
+        }
+        return (
+          <p key={i} className="text-muted-foreground">
+            {t}
+          </p>
+        );
+      })}
+    </div>
+  );
+}

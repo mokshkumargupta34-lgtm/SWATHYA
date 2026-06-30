@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { apiGet, type Consult } from "@/lib/client-api";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { HealthProfileCard } from "@/components/dashboard/health-profile-card";
+import { QRHealthCard } from "@/components/dashboard/qr-health-card";
 import {
   EmptyState,
   PageContainer,
@@ -118,6 +119,9 @@ export default function DashboardPage() {
 
       {/* Personal health profile (reflects onboarding answers) */}
       <HealthProfileCard />
+
+      {/* Portable, offline-readable QR health card */}
+      <QRHealthCard />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Weekly chart */}

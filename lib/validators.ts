@@ -96,6 +96,33 @@ export const verifyPaymentSchema = z.object({
   plan: z.enum(PAID_PLANS),
 });
 
+// ---- AI tools --------------------------------------------------------------
+export const symptomCheckSchema = z.object({
+  symptoms: z.string().trim().min(3, "Describe your symptoms").max(2000),
+  age: z.string().trim().max(20).optional(),
+  sex: z.string().trim().max(20).optional(),
+  duration: z.string().trim().max(80).optional(),
+  language: z.enum(LANGUAGES).optional(),
+});
+
+export const wellnessSchema = z.object({
+  messages: z
+    .array(
+      z.object({
+        role: z.enum(["user", "model"]),
+        text: z.string().trim().min(1).max(2000),
+      }),
+    )
+    .min(1)
+    .max(40),
+  language: z.enum(LANGUAGES).optional(),
+});
+
+export const healthHistorySchema = z.object({
+  answers: z.record(z.string(), z.string().max(2000)),
+  language: z.enum(LANGUAGES).optional(),
+});
+
 // ---- Doctor portal ---------------------------------------------------------
 // A doctor's specialty maps 1:1 to a consult type.
 export const SPECIALTIES = CONSULT_TYPES;
