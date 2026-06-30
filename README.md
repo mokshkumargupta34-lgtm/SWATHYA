@@ -52,7 +52,7 @@ Open <https://swathya.vercel.app/>.
 
 - Re-running [`supabase/schema.sql`](supabase/schema.sql) (step 4 above) is required after pulling this — it adds the `records` storage bucket, the AI columns on `health_records`, and the doctor read policy. It's idempotent, so just paste & run it again.
 - File uploads land in a public-by-URL `records` bucket under `records/<uid>/…` (unguessable paths). Doctors open patient attachments via the same URL once they have a consult with that patient.
-- For the **AI explanation**, set `GEMINI_API_KEY` in `.env.local` (see [`.env.example`](.env.example)) and restart. It uses **Google Gemini's free tier** (`gemini-2.0-flash`) — get a free key, no credit card, at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) — to read the uploaded photo/PDF and write a cautious, plain-language summary, never a diagnosis. Without the key, uploads still work; the "Analyze with AI" button just reports that it isn't configured.
+- For the **AI features** (symptom checker, "Mitra" wellness chat, AI history builder, and the plain-language record explanations), set `GROQ_API_KEY` in `.env.local` (see [`.env.example`](.env.example)) and restart. It uses **Groq's free tier** (Llama models, fast, no credit card) — get a free key at [console.groq.com/keys](https://console.groq.com/keys). To also analyze **PDF** record scans (Groq vision reads images but not PDFs), additionally set a free `GEMINI_API_KEY` from [aistudio.google.com/apikey](https://aistudio.google.com/apikey). All output is cautious and plain-language, never a diagnosis. Without a key, uploads still work; the AI just reports that it isn't configured.
 
 ## Scripts
 

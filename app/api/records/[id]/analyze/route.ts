@@ -16,7 +16,7 @@ export async function POST(_request: Request, { params }: Params) {
   if (!isAIConfigured)
     return jsonError(
       503,
-      "AI analysis isn't set up yet. Add a (free) GEMINI_API_KEY to enable it.",
+      "AI analysis isn't set up yet. Add a (free) GROQ_API_KEY to enable it (PDF scans also need GEMINI_API_KEY).",
     );
 
   const { data: record, error } = await ctx.supabase

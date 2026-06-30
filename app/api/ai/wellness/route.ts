@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const ctx = await requireUser();
   if (!isAuthed(ctx)) return ctx.response;
   if (!isAIConfigured)
-    return jsonError(503, "AI isn't enabled yet — add a Gemini API key to use the wellness companion.");
+    return jsonError(503, "AI isn't enabled yet — add a Groq API key to use the wellness companion.");
 
   const parsed = await parseBody(request, wellnessSchema);
   if ("response" in parsed) return parsed.response;

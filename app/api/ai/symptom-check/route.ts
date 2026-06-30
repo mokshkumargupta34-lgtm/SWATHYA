@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const ctx = await requireUser();
   if (!isAuthed(ctx)) return ctx.response;
   if (!isAIConfigured)
-    return jsonError(503, "AI isn't enabled yet — add a Gemini API key to use the symptom checker.");
+    return jsonError(503, "AI isn't enabled yet — add a Groq API key to use the symptom checker.");
 
   const parsed = await parseBody(request, symptomCheckSchema);
   if ("response" in parsed) return parsed.response;
